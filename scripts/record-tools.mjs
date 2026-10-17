@@ -1,0 +1,12 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+const run=(file,args)=>{try{return execFileSync(file,args,{encoding:'utf8',windowsHide:true}).trim();}catch(e){if(e.stdout)return e.stdout.trim();throw e;}};
+const lock=JSON.parse(readFileSync('package-lock.json'));
+const packages=Object.fromEntries(['express','ajv','ajv-formats','newman','@apidevtools/swagger-parser','@redocly/cli','playwright-core'].map(p=>[p,lock.packages['node_modules/'+p].version]));
+const npm=(...args)=>process.platform==='win32'?run('cmd.exe',['/d','/s','/c','npm '+args.join(' ')]):run('npm',args);
+const audit=JSON.parse(npm('audit','--json'));
+const production=JSON.parse(npm('audit','--omit=dev','--json'));
+const versions={recordedAt:new Date().toISOString(),platform:process.platform,node:process.version,npm:npm('--version'),git:run('git',['--version']),python:run('python',['--version']),sqlite:process.versions.sqlite,packages,postman:{version:'12.32.4',source:'VersionInfo del ejecutable instalado; colección importada y ejecutada mediante la ventana real.'},word:'16.0 disponible; exportación COM no finalizó; sesión de esta tarea cerrada sin guardar',pdf:'DOCX fuente convertido con ReportLab 5.0.0; render y revisión con PyMuPDF 1.28.0',claude:{available:false,checks:['claude --version no encontrado','PATH sin ejecutable','Sin ejecutable en .local/bin, .claude/local, npm global y WinGet Links'],authentication:'No comprobable sin ejecutable',participated:false}};
+writeFileSync('evidence/tool-versions.json',JSON.stringify(versions,null,2)+'\n');
+writeFileSync('evidence/dependency-audit.json',JSON.stringify({checkedAt:new Date().toISOString(),production:production.metadata.vulnerabilities,allIncludingDevelopment:audit.metadata.vulnerabilities,developmentAdvisories:Object.keys(audit.vulnerabilities || {}),note:'Las dependencias de la API no presentan avisos. Newman contiene dependencias heredadas; se ejecutaron únicamente colecciones y datos ficticios controlados. No se aplicaron cambios forzados de versión.'},null,2)+'\n');
+console.log(JSON.stringify({versions,production:production.metadata.vulnerabilities,allIncludingDevelopment:audit.metadata.vulnerabilities},null,2));

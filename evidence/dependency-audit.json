@@ -1,0 +1,41 @@
+{
+  "checkedAt": "2026-10-17T01:52:51.814Z",
+  "production": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "allIncludingDevelopment": {
+    "info": 0,
+    "low": 0,
+    "moderate": 7,
+    "high": 11,
+    "critical": 1,
+    "total": 19
+  },
+  "developmentAdvisories": [
+    "@faker-js/faker",
+    "csv-parse",
+    "flatted",
+    "handlebars",
+    "httpntlm",
+    "jose",
+    "lodash",
+    "newman",
+    "node-forge",
+    "postman-collection",
+    "postman-collection-transformer",
+    "postman-request",
+    "postman-runtime",
+    "postman-sandbox",
+    "qs",
+    "serialised-error",
+    "underscore",
+    "uuid",
+    "uvm"
+  ],
+  "note": "Las dependencias de la API no presentan avisos. Newman contiene dependencias heredadas; se ejecutaron únicamente colecciones y datos ficticios controlados. No se aplicaron cambios forzados de versión."
+}

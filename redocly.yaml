@@ -1,0 +1,4 @@
+extends:
+  - minimal
+rules:
+  info-license: off

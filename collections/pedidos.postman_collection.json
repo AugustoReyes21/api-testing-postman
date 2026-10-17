@@ -1,0 +1,1657 @@
+{
+  "info": {
+    "_postman_id": "72b0b6c5-a201-4749-9e87-922529f7e007",
+    "name": "Pedidos | Práctica automatizada (18 casos)",
+    "description": "18 casos funcionales distintos. SETUP y CLEANUP son solicitudes auxiliares. Ejecutar en orden tras npm run seed. Formato v2.1 importable en Postman y ejecutable en Newman. Los esquemas de cuerpos usan un subconjunto compatible con ambos validadores; el contrato 3.1 se valida por separado.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "SETUP | API disponible",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('SETUP | HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('SETUP | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('SETUP | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('SETUP | esquema Health', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"status\",\"storage\"],\"properties\":{\"status\":{\"type\":\"string\",\"const\":\"ok\"},\"storage\":{\"type\":\"string\",\"const\":\"sqlite\"}}}));",
+              "",
+              "",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/health",
+        "description": "SETUP. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-01 | Autenticación válida A",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "['tokenA','tokenB','ownerA','ownerB','orderId','createdOrder','firstPut','pageOne','baselineTotal','fixtureIds'].forEach(k => pm.collectionVariables.unset(k));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-01 | HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('TC-01 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-01 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-01 | esquema Login', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"accessToken\",\"tokenType\",\"expiresIn\",\"user\"],\"properties\":{\"accessToken\":{\"type\":\"string\",\"minLength\":32},\"tokenType\":{\"const\":\"Bearer\",\"type\":\"string\"},\"expiresIn\":{\"type\":\"integer\",\"const\":3600},\"user\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"email\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"email\":{\"type\":\"string\",\"format\":\"email\"}}}}}));",
+              "",
+              "pm.test('TC-01 | usuario A', () => pm.expect(data.user.email).to.eql(pm.environment.get('emailA'))); pm.collectionVariables.set('tokenA', data.accessToken); pm.collectionVariables.set('ownerA', data.user.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"{{emailA}}\",\"password\":\"{{passwordA}}\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "TC-01. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "SETUP | Autenticación válida B",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('SETUP | HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('SETUP | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('SETUP | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('SETUP | esquema Login', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"accessToken\",\"tokenType\",\"expiresIn\",\"user\"],\"properties\":{\"accessToken\":{\"type\":\"string\",\"minLength\":32},\"tokenType\":{\"const\":\"Bearer\",\"type\":\"string\"},\"expiresIn\":{\"type\":\"integer\",\"const\":3600},\"user\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"email\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"email\":{\"type\":\"string\",\"format\":\"email\"}}}}}));",
+              "",
+              "pm.test('SETUP | usuarios distintos', () => pm.expect(data.user.id).not.to.eql(Number(pm.collectionVariables.get('ownerA')))); pm.collectionVariables.set('tokenB',data.accessToken); pm.collectionVariables.set('ownerB',data.user.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"{{emailB}}\",\"password\":\"{{passwordB}}\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "SETUP. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-02 | Crear pedido",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-02 | HTTP 201', () => pm.response.to.have.status(201));",
+              "pm.test('TC-02 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-02 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-02 | esquema Order', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}));",
+              "",
+              "pm.test('TC-02 | importe calculado y propietario', () => { pm.expect(data.totalCents).to.eql(2500); pm.expect(data.ownerId).to.eql(Number(pm.collectionVariables.get('ownerA'))); pm.expect(data.status).to.eql('pending'); pm.expect(data.version).to.eql(1); }); pm.test('TC-02 | Location', () => pm.expect(pm.response.headers.get('Location')).to.eql('/orders/'+data.id)); pm.collectionVariables.set('orderId',data.id); pm.collectionVariables.set('createdOrder',JSON.stringify(data));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"items\":[{\"product\":\"Cuaderno ficticio\",\"quantity\":2,\"unitPriceCents\":1250}],\"currency\":\"GTQ\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "TC-02. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-03 | Persistencia por consulta posterior",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-03 | HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('TC-03 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-03 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-03 | esquema Order', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}));",
+              "",
+              "pm.test('TC-03 | recurso idéntico al persistido', () => pm.expect(data).to.deep.eql(JSON.parse(pm.collectionVariables.get('createdOrder'))));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{orderId}}",
+        "description": "TC-03. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-04 | Campo obligatorio ausente",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-04 | HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('TC-04 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-04 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-04 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-04 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-04 | falta items', () => { pm.expect(data.error.code).to.eql('VALIDATION_ERROR'); pm.expect(data.error.details.join(' ')).to.include('required'); });",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"currency\":\"GTQ\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "TC-04. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-05 | Cantidad inválida",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-05 | HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('TC-05 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-05 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-05 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-05 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-05 | cantidad rechazada', () => pm.expect(data.error.details.join(' ')).to.include('minimum'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"items\":[{\"product\":\"Cuaderno ficticio\",\"quantity\":0,\"unitPriceCents\":1250}],\"currency\":\"GTQ\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "TC-05. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-06 | Sin credenciales",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-06 | HTTP 401', () => pm.response.to.have.status(401));",
+              "pm.test('TC-06 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-06 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-06 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-06 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-06 | desafío Bearer', () => pm.expect(pm.response.headers.get('WWW-Authenticate')).to.eql('Bearer'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/orders",
+        "description": "TC-06. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-07 | Token inválido",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('invalidToken','invalid-session');"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-07 | HTTP 401', () => pm.response.to.have.status(401));",
+              "pm.test('TC-07 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-07 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-07 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-07 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-07 | sesión rechazada', () => pm.expect(data.error.code).to.eql('UNAUTHORIZED'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{invalidToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders",
+        "description": "TC-07. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-08 | Usuario B no puede GET pedido ajeno",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-08 | HTTP 403', () => pm.response.to.have.status(403));",
+              "pm.test('TC-08 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-08 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-08 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-08 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-08 | permiso denegado', () => pm.expect(data.error.code).to.eql('FORBIDDEN'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenB}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{orderId}}",
+        "description": "TC-08. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-08 | Usuario B no puede PUT pedido ajeno",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-08 | HTTP 403', () => pm.response.to.have.status(403));",
+              "pm.test('TC-08 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-08 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-08 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-08 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-08 | permiso denegado', () => pm.expect(data.error.code).to.eql('FORBIDDEN'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenB}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{orderId}}/status",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\":\"cancelled\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "TC-08. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-08 | Usuario B no puede DELETE pedido ajeno",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-08 | HTTP 403', () => pm.response.to.have.status(403));",
+              "pm.test('TC-08 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-08 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-08 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-08 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-08 | permiso denegado', () => pm.expect(data.error.code).to.eql('FORBIDDEN'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenB}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{orderId}}",
+        "description": "TC-08. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-08 | Propietario verifica ausencia de cambios ajenos",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-08 | HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('TC-08 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-08 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-08 | esquema Order', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}));",
+              "",
+              "pm.test('TC-08 | integridad después del intento ajeno', () => pm.expect(data).to.deep.eql(JSON.parse(pm.collectionVariables.get('createdOrder'))));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{orderId}}",
+        "description": "TC-08. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-09 | Recurso inexistente",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-09 | HTTP 404', () => pm.response.to.have.status(404));",
+              "pm.test('TC-09 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-09 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-09 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-09 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-09 | inexistente', () => pm.expect(data.error.code).to.eql('NOT_FOUND'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/9007199254740000",
+        "description": "TC-09. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-10 | Paginación base propia",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-10 | HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('TC-10 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-10 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-10 | esquema OrderList', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"data\",\"pagination\"],\"properties\":{\"data\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}},\"pagination\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"page\",\"limit\",\"total\",\"totalPages\"],\"properties\":{\"page\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000},\"limit\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":50},\"total\":{\"type\":\"integer\",\"minimum\":0},\"totalPages\":{\"type\":\"integer\",\"minimum\":0}}}}}));",
+              "",
+              "pm.collectionVariables.set('baselineTotal',data.pagination.total); pm.collectionVariables.set('fixtureIds','[]'); pm.test('TC-10 | solo recursos propios', () => data.data.forEach(o => pm.expect(o.ownerId).to.eql(Number(pm.collectionVariables.get('ownerA')))));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders?page=1&limit=50",
+        "description": "TC-10. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "SETUP | Crear dato paginación 1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('SETUP | HTTP 201', () => pm.response.to.have.status(201));",
+              "pm.test('SETUP | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('SETUP | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('SETUP | esquema Order', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}));",
+              "",
+              "const ids=JSON.parse(pm.collectionVariables.get('fixtureIds')); ids.push(data.id); pm.collectionVariables.set('fixtureIds',JSON.stringify(ids)); pm.collectionVariables.set('fixture1',data.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"items\":[{\"product\":\"Dato paginado 1\",\"quantity\":1,\"unitPriceCents\":100}],\"currency\":\"GTQ\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "SETUP. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "SETUP | Crear dato paginación 2",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('SETUP | HTTP 201', () => pm.response.to.have.status(201));",
+              "pm.test('SETUP | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('SETUP | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('SETUP | esquema Order', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}));",
+              "",
+              "const ids=JSON.parse(pm.collectionVariables.get('fixtureIds')); ids.push(data.id); pm.collectionVariables.set('fixtureIds',JSON.stringify(ids)); pm.collectionVariables.set('fixture2',data.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"items\":[{\"product\":\"Dato paginado 2\",\"quantity\":2,\"unitPriceCents\":100}],\"currency\":\"GTQ\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "SETUP. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "SETUP | Crear dato paginación 3",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('SETUP | HTTP 201', () => pm.response.to.have.status(201));",
+              "pm.test('SETUP | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('SETUP | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('SETUP | esquema Order', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}));",
+              "",
+              "const ids=JSON.parse(pm.collectionVariables.get('fixtureIds')); ids.push(data.id); pm.collectionVariables.set('fixtureIds',JSON.stringify(ids)); pm.collectionVariables.set('fixture3',data.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"items\":[{\"product\":\"Dato paginado 3\",\"quantity\":3,\"unitPriceCents\":100}],\"currency\":\"GTQ\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "SETUP. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "SETUP | Crear dato paginación 4",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('SETUP | HTTP 201', () => pm.response.to.have.status(201));",
+              "pm.test('SETUP | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('SETUP | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('SETUP | esquema Order', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}));",
+              "",
+              "const ids=JSON.parse(pm.collectionVariables.get('fixtureIds')); ids.push(data.id); pm.collectionVariables.set('fixtureIds',JSON.stringify(ids)); pm.collectionVariables.set('fixture4',data.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"items\":[{\"product\":\"Dato paginado 4\",\"quantity\":4,\"unitPriceCents\":100}],\"currency\":\"GTQ\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "SETUP. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-10 | Página uno límite dos",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-10 | HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('TC-10 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-10 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-10 | esquema OrderList', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"data\",\"pagination\"],\"properties\":{\"data\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}},\"pagination\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"page\",\"limit\",\"total\",\"totalPages\"],\"properties\":{\"page\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000},\"limit\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":50},\"total\":{\"type\":\"integer\",\"minimum\":0},\"totalPages\":{\"type\":\"integer\",\"minimum\":0}}}}}));",
+              "",
+              "pm.test('TC-10 | límites y total', () => { pm.expect(data.data).to.have.lengthOf(2); pm.expect(data.pagination).to.deep.eql({page:1,limit:2,total:Number(pm.collectionVariables.get('baselineTotal'))+4,totalPages:Math.ceil((Number(pm.collectionVariables.get('baselineTotal'))+4)/2)}); }); pm.collectionVariables.set('pageOne',JSON.stringify(data.data.map(o=>o.id)));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders?page=1&limit=2",
+        "description": "TC-10. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-10 | Página dos sin duplicados",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-10 | HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('TC-10 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-10 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-10 | esquema OrderList', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"data\",\"pagination\"],\"properties\":{\"data\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}},\"pagination\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"page\",\"limit\",\"total\",\"totalPages\"],\"properties\":{\"page\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000},\"limit\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":50},\"total\":{\"type\":\"integer\",\"minimum\":0},\"totalPages\":{\"type\":\"integer\",\"minimum\":0}}}}}));",
+              "",
+              "pm.test('TC-10 | páginas distintas ordenadas', () => { const previous=JSON.parse(pm.collectionVariables.get('pageOne')); pm.expect(data.data).to.have.lengthOf(2); pm.expect(data.pagination.page).to.eql(2); data.data.forEach(o=>pm.expect(previous).not.to.include(o.id)); pm.expect(data.data[0].id).to.be.greaterThan(previous[1]); });",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders?page=2&limit=2",
+        "description": "TC-10. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-10 | Página fuera del rango",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-10 | HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('TC-10 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-10 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-10 | esquema OrderList', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"data\",\"pagination\"],\"properties\":{\"data\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}},\"pagination\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"page\",\"limit\",\"total\",\"totalPages\"],\"properties\":{\"page\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000},\"limit\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":50},\"total\":{\"type\":\"integer\",\"minimum\":0},\"totalPages\":{\"type\":\"integer\",\"minimum\":0}}}}}));",
+              "",
+              "pm.test('TC-10 | fuera de rango conserva metadatos', () => { pm.expect(data.data).to.have.lengthOf(0); pm.expect(data.pagination.page).to.eql(1000000); pm.expect(data.pagination.total).to.eql(Number(pm.collectionVariables.get('baselineTotal'))+4); });",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders?page=1000000&limit=2",
+        "description": "TC-10. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-11 | Primera aplicación PUT",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-11 | HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('TC-11 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-11 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-11 | esquema Order', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}));",
+              "",
+              "pm.test('TC-11 | transición real', () => { pm.expect(data.status).to.eql('confirmed'); pm.expect(data.version).to.eql(2); pm.expect(data.items).to.deep.eql(JSON.parse(pm.collectionVariables.get('createdOrder')).items); }); pm.collectionVariables.set('firstPut',JSON.stringify(data));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{orderId}}/status",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\":\"confirmed\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "TC-11. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-11 | Repetición PUT idéntico",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-11 | HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('TC-11 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-11 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-11 | esquema Order', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}));",
+              "",
+              "pm.test('TC-11 | sin segunda mutación', () => pm.expect(data).to.deep.eql(JSON.parse(pm.collectionVariables.get('firstPut'))));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{orderId}}/status",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\":\"confirmed\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "TC-11. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-11 | Estado persistido después de repetir PUT",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-11 | HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('TC-11 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-11 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-11 | esquema Order', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}));",
+              "",
+              "pm.test('TC-11 | estado final persistido idéntico', () => pm.expect(data).to.deep.eql(JSON.parse(pm.collectionVariables.get('firstPut'))));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{orderId}}",
+        "description": "TC-11. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-12 | Contrato de error y estado fuera del enum",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-12 | HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('TC-12 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-12 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-12 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-12 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-12 | esquema de error y restricción enum', () => { pm.expect(data.error.code).to.eql('VALIDATION_ERROR'); pm.expect(data.error.details.join(' ')).to.include('enum'); });",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{orderId}}/status",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\":\"delivered\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "TC-12. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-12 | Esquema de éxito tras error sin mutación",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-12 | HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('TC-12 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-12 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-12 | esquema Order', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}));",
+              "",
+              "pm.test('TC-12 | contrato de éxito y atomicidad', () => pm.expect(data).to.deep.eql(JSON.parse(pm.collectionVariables.get('firstPut'))));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{orderId}}",
+        "description": "TC-12. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-13 | Contraseña de autenticación incorrecta",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-13 | HTTP 401', () => pm.response.to.have.status(401));",
+              "pm.test('TC-13 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-13 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-13 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-13 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-13 | credenciales rechazadas', () => pm.expect(data.error.code).to.eql('INVALID_CREDENTIALS'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"{{emailA}}\",\"password\":\"ficticia-incorrecta\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "TC-13. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-14 | Paginación inválida page=0",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-14 | HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('TC-14 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-14 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-14 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-14 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-14 | rechazo de paginación', () => pm.expect(data.error.code).to.eql('VALIDATION_ERROR'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders?page=0",
+        "description": "TC-14. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-14 | Paginación inválida page=1.5",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-14 | HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('TC-14 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-14 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-14 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-14 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-14 | rechazo de paginación', () => pm.expect(data.error.code).to.eql('VALIDATION_ERROR'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders?page=1.5",
+        "description": "TC-14. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-14 | Paginación inválida limit=51",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-14 | HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('TC-14 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-14 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-14 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-14 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-14 | rechazo de paginación', () => pm.expect(data.error.code).to.eql('VALIDATION_ERROR'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders?limit=51",
+        "description": "TC-14. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-14 | Paginación inválida limit=0",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-14 | HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('TC-14 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-14 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-14 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-14 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-14 | rechazo de paginación', () => pm.expect(data.error.code).to.eql('VALIDATION_ERROR'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders?limit=0",
+        "description": "TC-14. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-14 | Paginación inválida page=abc",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-14 | HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('TC-14 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-14 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-14 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-14 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-14 | rechazo de paginación', () => pm.expect(data.error.code).to.eql('VALIDATION_ERROR'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders?page=abc",
+        "description": "TC-14. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-14 | Paginación inválida page=1&page=2",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-14 | HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('TC-14 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-14 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-14 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-14 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-14 | rechazo de paginación', () => pm.expect(data.error.code).to.eql('VALIDATION_ERROR'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders?page=1&page=2",
+        "description": "TC-14. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-14 | Paginación inválida unexpected=1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-14 | HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('TC-14 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-14 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-14 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-14 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-14 | rechazo de paginación', () => pm.expect(data.error.code).to.eql('VALIDATION_ERROR'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders?unexpected=1",
+        "description": "TC-14. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-16 | JSON malformado",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-16 | HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('TC-16 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-16 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-16 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-16 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-16 | error de sintaxis estructurado', () => pm.expect(data.error.code).to.eql('INVALID_JSON'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"items\":",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "TC-16. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-17 | Rechazo de asignación de propietario",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-17 | HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('TC-17 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-17 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-17 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-17 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-17 | campos adicionales rechazados', () => pm.expect(data.error.details.join(' ')).to.include('additionalProperties'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"items\":[{\"product\":\"Cuaderno ficticio\",\"quantity\":2,\"unitPriceCents\":1250}],\"currency\":\"GTQ\",\"ownerId\":2}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "TC-17. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-18 | Listado aislado del usuario B",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-18 | HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('TC-18 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-18 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-18 | esquema OrderList', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"data\",\"pagination\"],\"properties\":{\"data\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}},\"pagination\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"page\",\"limit\",\"total\",\"totalPages\"],\"properties\":{\"page\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000},\"limit\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":50},\"total\":{\"type\":\"integer\",\"minimum\":0},\"totalPages\":{\"type\":\"integer\",\"minimum\":0}}}}}));",
+              "",
+              "pm.test('TC-18 | cero pedidos ajenos expuestos', () => { pm.expect(data.data).to.have.lengthOf(0); pm.expect(data.pagination).to.deep.eql({page:1,limit:10,total:0,totalPages:0}); });",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenB}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders",
+        "description": "TC-18. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-15 | Eliminar pedido propio",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-15 | HTTP 204', () => pm.response.to.have.status(204));",
+              "pm.test('TC-15 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "pm.test('TC-15 | cuerpo vacío', () => pm.expect(pm.response.text()).to.eql(''));",
+              "",
+              "",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{orderId}}",
+        "description": "TC-15. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-15 | Repetir eliminación",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-15 | HTTP 204', () => pm.response.to.have.status(204));",
+              "pm.test('TC-15 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "pm.test('TC-15 | cuerpo vacío', () => pm.expect(pm.response.text()).to.eql(''));",
+              "",
+              "",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{orderId}}",
+        "description": "TC-15. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "TC-15 | Confirmar ausencia final",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('TC-15 | HTTP 404', () => pm.response.to.have.status(404));",
+              "pm.test('TC-15 | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('TC-15 | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('TC-15 | esquema Error', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"details\",\"requestId\"],\"properties\":{\"code\":{\"type\":\"string\",\"enum\":[\"UNAUTHORIZED\",\"INVALID_CREDENTIALS\",\"FORBIDDEN\",\"NOT_FOUND\",\"VALIDATION_ERROR\",\"INVALID_JSON\",\"PAYLOAD_TOO_LARGE\",\"UNSUPPORTED_MEDIA_TYPE\",\"INTERNAL_ERROR\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"requestId\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}));",
+              "pm.test('TC-15 | error correlacionado', () => pm.expect(data.error.requestId).to.eql(pm.response.headers.get('X-Request-Id')));",
+              "pm.test('TC-15 | ausencia persistida', () => pm.expect(data.error.code).to.eql('NOT_FOUND'));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{orderId}}",
+        "description": "TC-15. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "CLEANUP | Eliminar dato paginación 1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('CLEANUP | HTTP 204', () => pm.response.to.have.status(204));",
+              "pm.test('CLEANUP | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "pm.test('CLEANUP | cuerpo vacío', () => pm.expect(pm.response.text()).to.eql(''));",
+              "",
+              "",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{fixture1}}",
+        "description": "CLEANUP. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "CLEANUP | Eliminar dato paginación 2",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('CLEANUP | HTTP 204', () => pm.response.to.have.status(204));",
+              "pm.test('CLEANUP | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "pm.test('CLEANUP | cuerpo vacío', () => pm.expect(pm.response.text()).to.eql(''));",
+              "",
+              "",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{fixture2}}",
+        "description": "CLEANUP. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "CLEANUP | Eliminar dato paginación 3",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('CLEANUP | HTTP 204', () => pm.response.to.have.status(204));",
+              "pm.test('CLEANUP | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "pm.test('CLEANUP | cuerpo vacío', () => pm.expect(pm.response.text()).to.eql(''));",
+              "",
+              "",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{fixture3}}",
+        "description": "CLEANUP. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "CLEANUP | Eliminar dato paginación 4",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('CLEANUP | HTTP 204', () => pm.response.to.have.status(204));",
+              "pm.test('CLEANUP | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "pm.test('CLEANUP | cuerpo vacío', () => pm.expect(pm.response.text()).to.eql(''));",
+              "",
+              "",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/{{fixture4}}",
+        "description": "CLEANUP. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    },
+    {
+      "name": "CLEANUP | Sin residuos de ejecución",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('CLEANUP | HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('CLEANUP | correlación y caché', () => { pm.expect(pm.response.headers.get('X-Request-Id')).to.match(/^[0-9a-f-]{36}$/); pm.expect(pm.response.headers.get('Cache-Control')).to.eql('no-store'); });",
+              "const data = pm.response.json(); pm.test('CLEANUP | Content-Type JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json')); pm.test('CLEANUP | esquema OrderList', () => pm.response.to.have.jsonSchema({\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"data\",\"pagination\"],\"properties\":{\"data\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"ownerId\",\"items\",\"currency\",\"totalCents\",\"status\",\"version\",\"createdAt\",\"updatedAt\"],\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"ownerId\":{\"type\":\"integer\",\"minimum\":1},\"items\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"product\",\"quantity\",\"unitPriceCents\"],\"properties\":{\"product\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"\\\\S\"},\"quantity\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"unitPriceCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}}}},\"currency\":{\"type\":\"string\",\"enum\":[\"GTQ\",\"USD\"]},\"totalCents\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2000000000},\"status\":{\"type\":\"string\",\"enum\":[\"pending\",\"confirmed\",\"cancelled\"]},\"version\":{\"type\":\"integer\",\"minimum\":1},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"updatedAt\":{\"type\":\"string\",\"format\":\"date-time\"}}}},\"pagination\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"page\",\"limit\",\"total\",\"totalPages\"],\"properties\":{\"page\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000},\"limit\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":50},\"total\":{\"type\":\"integer\",\"minimum\":0},\"totalPages\":{\"type\":\"integer\",\"minimum\":0}}}}}));",
+              "",
+              "pm.test('CLEANUP | cero pedidos',()=>pm.expect(data.pagination.total).to.eql(0));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenA}}"
+          }
+        ],
+        "url": "{{baseUrl}}/orders",
+        "description": "CLEANUP. Ejecutar la colección completa en orden, tras npm run seed. Cada cuerpo se valida contra el esquema publicado; no sustituye la validación completa de OpenAPI."
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "tokenA",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tokenB",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "orderId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

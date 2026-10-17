@@ -1,0 +1,480 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><title>Evidencia real de Newman</title><style>body{font:18px Arial,sans-serif;line-height:1.4;color:#111;background:white;max-width:1200px;margin:24px auto}h1,h2{font-size:23px}section{padding:14px 0;margin:20px 0}table{border-collapse:collapse;width:100%;font-size:17px}td,th{border:1px solid #999;padding:10px;text-align:left}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:16px}header p{margin:6px 0}</style><header><h1>Resultados auténticos de ejecución — Newman</h1><p>Informes JSON sanitizados de evidence/runs. Esta página no es una captura de Postman.</p><p>API Node.js/Express + SQLite; contrato OpenAPI 3.1; datos ficticios.</p></header><section id="runs"><h2>Ejecuciones y defecto controlado</h2><table><thead><tr><td>Ejecución</td><td>Casos</td><td>Solicitudes</td><td>Aprobadas</td><td>Fallidas</td><td>Errores contrato</td></tr></thead><tbody><tr><td>baseline</td><td>18</td><td>46</td><td>234</td><td>0</td><td>0</td></tr><tr><td>controlled-defect</td><td>18</td><td>46</td><td>219</td><td>15</td><td>16</td></tr><tr><td>corrected</td><td>18</td><td>46</td><td>234</td><td>0</td><td>0</td></tr><tr><td>clean-repeat</td><td>18</td><td>46</td><td>234</td><td>0</td><td>0</td></tr></tbody></table><p>El defecto convirtió totalCents a texto; se restauró el tipo entero sin cambiar el contrato.</p></section><section id="idempotency"><h2>TC-11 — Estado real después de repetir PUT</h2><p>Fuente: clean-repeat; 2026-10-17T01:55:24.695Z (UTC).</p><table><thead><tr><td>Operación</td><td>HTTP</td><td>id</td><td>status</td><td>version</td><td>totalCents</td><td>updatedAt</td></tr></thead><tbody><tr><td>PUT /orders/1/status</td><td>200</td><td>1</td><td>confirmed</td><td>2</td><td>2500</td><td>2026-10-17T01:55:21.820Z</td></tr><tr><td>PUT /orders/1/status</td><td>200</td><td>1</td><td>confirmed</td><td>2</td><td>2500</td><td>2026-10-17T01:55:21.820Z</td></tr><tr><td>GET /orders/1</td><td>200</td><td>1</td><td>confirmed</td><td>2</td><td>2500</td><td>2026-10-17T01:55:21.820Z</td></tr></tbody></table><p>La segunda aplicación y la consulta final conservan el mismo recurso completo, no solo el código HTTP.</p></section><section id="details"><h2>Solicitudes y aserciones</h2><h3>SETUP | API disponible</h3><p>GET /health — HTTP 200</p><pre>{
+  &quot;status&quot;: &quot;ok&quot;,
+  &quot;storage&quot;: &quot;sqlite&quot;
+}</pre><ul><li>PASS | SETUP | HTTP 200</li><li>PASS | SETUP | correlación y caché</li><li>PASS | SETUP | Content-Type JSON</li><li>PASS | SETUP | esquema Health</li></ul><h3>TC-01 | Autenticación válida A</h3><p>POST /auth/login — HTTP 200</p><pre>{
+  &quot;accessToken&quot;: &quot;[REDACTED]&quot;,
+  &quot;tokenType&quot;: &quot;Bearer&quot;,
+  &quot;expiresIn&quot;: 3600,
+  &quot;user&quot;: {
+    &quot;id&quot;: 1,
+    &quot;email&quot;: &quot;ana@example.test&quot;
+  }
+}</pre><ul><li>PASS | TC-01 | HTTP 200</li><li>PASS | TC-01 | correlación y caché</li><li>PASS | TC-01 | Content-Type JSON</li><li>PASS | TC-01 | esquema Login</li><li>PASS | TC-01 | usuario A</li></ul><h3>SETUP | Autenticación válida B</h3><p>POST /auth/login — HTTP 200</p><pre>{
+  &quot;accessToken&quot;: &quot;[REDACTED]&quot;,
+  &quot;tokenType&quot;: &quot;Bearer&quot;,
+  &quot;expiresIn&quot;: 3600,
+  &quot;user&quot;: {
+    &quot;id&quot;: 2,
+    &quot;email&quot;: &quot;bruno@example.test&quot;
+  }
+}</pre><ul><li>PASS | SETUP | HTTP 200</li><li>PASS | SETUP | correlación y caché</li><li>PASS | SETUP | Content-Type JSON</li><li>PASS | SETUP | esquema Login</li><li>PASS | SETUP | usuarios distintos</li></ul><h3>TC-02 | Crear pedido</h3><p>POST /orders — HTTP 201</p><pre>{
+  &quot;id&quot;: 1,
+  &quot;ownerId&quot;: 1,
+  &quot;items&quot;: [
+    {
+      &quot;product&quot;: &quot;Cuaderno ficticio&quot;,
+      &quot;quantity&quot;: 2,
+      &quot;unitPriceCents&quot;: 1250
+    }
+  ],
+  &quot;currency&quot;: &quot;GTQ&quot;,
+  &quot;totalCents&quot;: 2500,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;version&quot;: 1,
+  &quot;createdAt&quot;: &quot;2026-10-17T01:55:19.504Z&quot;,
+  &quot;updatedAt&quot;: &quot;2026-10-17T01:55:19.504Z&quot;
+}</pre><ul><li>PASS | TC-02 | HTTP 201</li><li>PASS | TC-02 | correlación y caché</li><li>PASS | TC-02 | Content-Type JSON</li><li>PASS | TC-02 | esquema Order</li><li>PASS | TC-02 | importe calculado y propietario</li><li>PASS | TC-02 | Location</li></ul><h3>TC-03 | Persistencia por consulta posterior</h3><p>GET /orders/1 — HTTP 200</p><pre>{
+  &quot;id&quot;: 1,
+  &quot;ownerId&quot;: 1,
+  &quot;items&quot;: [
+    {
+      &quot;product&quot;: &quot;Cuaderno ficticio&quot;,
+      &quot;quantity&quot;: 2,
+      &quot;unitPriceCents&quot;: 1250
+    }
+  ],
+  &quot;currency&quot;: &quot;GTQ&quot;,
+  &quot;totalCents&quot;: 2500,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;version&quot;: 1,
+  &quot;createdAt&quot;: &quot;2026-10-17T01:55:19.504Z&quot;,
+  &quot;updatedAt&quot;: &quot;2026-10-17T01:55:19.504Z&quot;
+}</pre><ul><li>PASS | TC-03 | HTTP 200</li><li>PASS | TC-03 | correlación y caché</li><li>PASS | TC-03 | Content-Type JSON</li><li>PASS | TC-03 | esquema Order</li><li>PASS | TC-03 | recurso idéntico al persistido</li></ul><h3>TC-04 | Campo obligatorio ausente</h3><p>POST /orders — HTTP 400</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;VALIDATION_ERROR&quot;,
+    &quot;message&quot;: &quot;La solicitud contiene datos inválidos.&quot;,
+    &quot;details&quot;: [
+      &quot;/: required&quot;
+    ],
+    &quot;requestId&quot;: &quot;f9082c67-7533-49a3-ade5-6e8a156035b5&quot;
+  }
+}</pre><ul><li>PASS | TC-04 | HTTP 400</li><li>PASS | TC-04 | correlación y caché</li><li>PASS | TC-04 | Content-Type JSON</li><li>PASS | TC-04 | esquema Error</li><li>PASS | TC-04 | error correlacionado</li><li>PASS | TC-04 | falta items</li></ul><h3>TC-05 | Cantidad inválida</h3><p>POST /orders — HTTP 400</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;VALIDATION_ERROR&quot;,
+    &quot;message&quot;: &quot;La solicitud contiene datos inválidos.&quot;,
+    &quot;details&quot;: [
+      &quot;/items/0/quantity: minimum&quot;
+    ],
+    &quot;requestId&quot;: &quot;bf75af58-ce33-4bc3-8d88-dbe94ced7b0c&quot;
+  }
+}</pre><ul><li>PASS | TC-05 | HTTP 400</li><li>PASS | TC-05 | correlación y caché</li><li>PASS | TC-05 | Content-Type JSON</li><li>PASS | TC-05 | esquema Error</li><li>PASS | TC-05 | error correlacionado</li><li>PASS | TC-05 | cantidad rechazada</li></ul><h3>TC-06 | Sin credenciales</h3><p>GET /orders — HTTP 401</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;UNAUTHORIZED&quot;,
+    &quot;message&quot;: &quot;Se requiere una sesión válida.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;0efd3228-7492-4963-8d23-94caeb3d943d&quot;
+  }
+}</pre><ul><li>PASS | TC-06 | HTTP 401</li><li>PASS | TC-06 | correlación y caché</li><li>PASS | TC-06 | Content-Type JSON</li><li>PASS | TC-06 | esquema Error</li><li>PASS | TC-06 | error correlacionado</li><li>PASS | TC-06 | desafío Bearer</li></ul><h3>TC-07 | Token inválido</h3><p>GET /orders — HTTP 401</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;UNAUTHORIZED&quot;,
+    &quot;message&quot;: &quot;Se requiere una sesión válida.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;06a29e3d-25d0-49b4-8623-13d13da13c52&quot;
+  }
+}</pre><ul><li>PASS | TC-07 | HTTP 401</li><li>PASS | TC-07 | correlación y caché</li><li>PASS | TC-07 | Content-Type JSON</li><li>PASS | TC-07 | esquema Error</li><li>PASS | TC-07 | error correlacionado</li><li>PASS | TC-07 | sesión rechazada</li></ul><h3>TC-08 | Usuario B no puede GET pedido ajeno</h3><p>GET /orders/1 — HTTP 403</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;FORBIDDEN&quot;,
+    &quot;message&quot;: &quot;No tiene permiso para acceder a este pedido.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;523d64c0-7715-43da-94ae-07f291a7c508&quot;
+  }
+}</pre><ul><li>PASS | TC-08 | HTTP 403</li><li>PASS | TC-08 | correlación y caché</li><li>PASS | TC-08 | Content-Type JSON</li><li>PASS | TC-08 | esquema Error</li><li>PASS | TC-08 | error correlacionado</li><li>PASS | TC-08 | permiso denegado</li></ul><h3>TC-08 | Usuario B no puede PUT pedido ajeno</h3><p>PUT /orders/1/status — HTTP 403</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;FORBIDDEN&quot;,
+    &quot;message&quot;: &quot;No tiene permiso para acceder a este pedido.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;9c3c5d98-7c5a-4dd6-a4b5-d49f67b462b2&quot;
+  }
+}</pre><ul><li>PASS | TC-08 | HTTP 403</li><li>PASS | TC-08 | correlación y caché</li><li>PASS | TC-08 | Content-Type JSON</li><li>PASS | TC-08 | esquema Error</li><li>PASS | TC-08 | error correlacionado</li><li>PASS | TC-08 | permiso denegado</li></ul><h3>TC-08 | Usuario B no puede DELETE pedido ajeno</h3><p>DELETE /orders/1 — HTTP 403</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;FORBIDDEN&quot;,
+    &quot;message&quot;: &quot;No tiene permiso para eliminar este pedido.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;d15a5828-739f-4c25-9b8a-e4ed53fd698b&quot;
+  }
+}</pre><ul><li>PASS | TC-08 | HTTP 403</li><li>PASS | TC-08 | correlación y caché</li><li>PASS | TC-08 | Content-Type JSON</li><li>PASS | TC-08 | esquema Error</li><li>PASS | TC-08 | error correlacionado</li><li>PASS | TC-08 | permiso denegado</li></ul><h3>TC-08 | Propietario verifica ausencia de cambios ajenos</h3><p>GET /orders/1 — HTTP 200</p><pre>{
+  &quot;id&quot;: 1,
+  &quot;ownerId&quot;: 1,
+  &quot;items&quot;: [
+    {
+      &quot;product&quot;: &quot;Cuaderno ficticio&quot;,
+      &quot;quantity&quot;: 2,
+      &quot;unitPriceCents&quot;: 1250
+    }
+  ],
+  &quot;currency&quot;: &quot;GTQ&quot;,
+  &quot;totalCents&quot;: 2500,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;version&quot;: 1,
+  &quot;createdAt&quot;: &quot;2026-10-17T01:55:19.504Z&quot;,
+  &quot;updatedAt&quot;: &quot;2026-10-17T01:55:19.504Z&quot;
+}</pre><ul><li>PASS | TC-08 | HTTP 200</li><li>PASS | TC-08 | correlación y caché</li><li>PASS | TC-08 | Content-Type JSON</li><li>PASS | TC-08 | esquema Order</li><li>PASS | TC-08 | integridad después del intento ajeno</li></ul><h3>TC-09 | Recurso inexistente</h3><p>GET /orders/9007199254740000 — HTTP 404</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;NOT_FOUND&quot;,
+    &quot;message&quot;: &quot;El pedido no existe.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;531ac149-7f89-4d00-8fa3-930d69f9bc0b&quot;
+  }
+}</pre><ul><li>PASS | TC-09 | HTTP 404</li><li>PASS | TC-09 | correlación y caché</li><li>PASS | TC-09 | Content-Type JSON</li><li>PASS | TC-09 | esquema Error</li><li>PASS | TC-09 | error correlacionado</li><li>PASS | TC-09 | inexistente</li></ul><h3>TC-10 | Paginación base propia</h3><p>GET /orders?page=1&amp;limit=50 — HTTP 200</p><pre>{
+  &quot;data&quot;: [
+    {
+      &quot;id&quot;: 1,
+      &quot;ownerId&quot;: 1,
+      &quot;items&quot;: [
+        {
+          &quot;product&quot;: &quot;Cuaderno ficticio&quot;,
+          &quot;quantity&quot;: 2,
+          &quot;unitPriceCents&quot;: 1250
+        }
+      ],
+      &quot;currency&quot;: &quot;GTQ&quot;,
+      &quot;totalCents&quot;: 2500,
+      &quot;status&quot;: &quot;pending&quot;,
+      &quot;version&quot;: 1,
+      &quot;createdAt&quot;: &quot;2026-10-17T01:55:19.504Z&quot;,
+      &quot;updatedAt&quot;: &quot;2026-10-17T01:55:19.504Z&quot;
+    }
+  ],
+  &quot;pagination&quot;: {
+    &quot;page&quot;: 1,
+    &quot;limit&quot;: 50,
+    &quot;total&quot;: 1,
+    &quot;totalPages&quot;: 1
+  }
+}</pre><ul><li>PASS | TC-10 | HTTP 200</li><li>PASS | TC-10 | correlación y caché</li><li>PASS | TC-10 | Content-Type JSON</li><li>PASS | TC-10 | esquema OrderList</li><li>PASS | TC-10 | solo recursos propios</li></ul><h3>SETUP | Crear dato paginación 1</h3><p>POST /orders — HTTP 201</p><pre>{
+  &quot;id&quot;: 2,
+  &quot;ownerId&quot;: 1,
+  &quot;items&quot;: [
+    {
+      &quot;product&quot;: &quot;Dato paginado 1&quot;,
+      &quot;quantity&quot;: 1,
+      &quot;unitPriceCents&quot;: 100
+    }
+  ],
+  &quot;currency&quot;: &quot;GTQ&quot;,
+  &quot;totalCents&quot;: 100,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;version&quot;: 1,
+  &quot;createdAt&quot;: &quot;2026-10-17T01:55:20.940Z&quot;,
+  &quot;updatedAt&quot;: &quot;2026-10-17T01:55:20.940Z&quot;
+}</pre><ul><li>PASS | SETUP | HTTP 201</li><li>PASS | SETUP | correlación y caché</li><li>PASS | SETUP | Content-Type JSON</li><li>PASS | SETUP | esquema Order</li></ul><h3>SETUP | Crear dato paginación 2</h3><p>POST /orders — HTTP 201</p><pre>{
+  &quot;id&quot;: 3,
+  &quot;ownerId&quot;: 1,
+  &quot;items&quot;: [
+    {
+      &quot;product&quot;: &quot;Dato paginado 2&quot;,
+      &quot;quantity&quot;: 2,
+      &quot;unitPriceCents&quot;: 100
+    }
+  ],
+  &quot;currency&quot;: &quot;GTQ&quot;,
+  &quot;totalCents&quot;: 200,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;version&quot;: 1,
+  &quot;createdAt&quot;: &quot;2026-10-17T01:55:21.065Z&quot;,
+  &quot;updatedAt&quot;: &quot;2026-10-17T01:55:21.065Z&quot;
+}</pre><ul><li>PASS | SETUP | HTTP 201</li><li>PASS | SETUP | correlación y caché</li><li>PASS | SETUP | Content-Type JSON</li><li>PASS | SETUP | esquema Order</li></ul><h3>SETUP | Crear dato paginación 3</h3><p>POST /orders — HTTP 201</p><pre>{
+  &quot;id&quot;: 4,
+  &quot;ownerId&quot;: 1,
+  &quot;items&quot;: [
+    {
+      &quot;product&quot;: &quot;Dato paginado 3&quot;,
+      &quot;quantity&quot;: 3,
+      &quot;unitPriceCents&quot;: 100
+    }
+  ],
+  &quot;currency&quot;: &quot;GTQ&quot;,
+  &quot;totalCents&quot;: 300,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;version&quot;: 1,
+  &quot;createdAt&quot;: &quot;2026-10-17T01:55:21.189Z&quot;,
+  &quot;updatedAt&quot;: &quot;2026-10-17T01:55:21.189Z&quot;
+}</pre><ul><li>PASS | SETUP | HTTP 201</li><li>PASS | SETUP | correlación y caché</li><li>PASS | SETUP | Content-Type JSON</li><li>PASS | SETUP | esquema Order</li></ul><h3>SETUP | Crear dato paginación 4</h3><p>POST /orders — HTTP 201</p><pre>{
+  &quot;id&quot;: 5,
+  &quot;ownerId&quot;: 1,
+  &quot;items&quot;: [
+    {
+      &quot;product&quot;: &quot;Dato paginado 4&quot;,
+      &quot;quantity&quot;: 4,
+      &quot;unitPriceCents&quot;: 100
+    }
+  ],
+  &quot;currency&quot;: &quot;GTQ&quot;,
+  &quot;totalCents&quot;: 400,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;version&quot;: 1,
+  &quot;createdAt&quot;: &quot;2026-10-17T01:55:21.314Z&quot;,
+  &quot;updatedAt&quot;: &quot;2026-10-17T01:55:21.314Z&quot;
+}</pre><ul><li>PASS | SETUP | HTTP 201</li><li>PASS | SETUP | correlación y caché</li><li>PASS | SETUP | Content-Type JSON</li><li>PASS | SETUP | esquema Order</li></ul><h3>TC-10 | Página uno límite dos</h3><p>GET /orders?page=1&amp;limit=2 — HTTP 200</p><pre>{
+  &quot;data&quot;: [
+    {
+      &quot;id&quot;: 1,
+      &quot;ownerId&quot;: 1,
+      &quot;items&quot;: [
+        {
+          &quot;product&quot;: &quot;Cuaderno ficticio&quot;,
+          &quot;quantity&quot;: 2,
+          &quot;unitPriceCents&quot;: 1250
+        }
+      ],
+      &quot;currency&quot;: &quot;GTQ&quot;,
+      &quot;totalCents&quot;: 2500,
+      &quot;status&quot;: &quot;pending&quot;,
+      &quot;version&quot;: 1,
+      &quot;createdAt&quot;: &quot;2026-10-17T01:55:19.504Z&quot;,
+      &quot;updatedAt&quot;: &quot;2026-10-17T01:55:19.504Z&quot;
+    },
+    {
+      &quot;id&quot;: 2,
+      &quot;ownerId&quot;: 1,
+      &quot;items&quot;: [
+        {
+          &quot;product&quot;: &quot;Dato paginado 1&quot;,
+          &quot;quantity&quot;: 1,
+          &quot;unitPriceCents&quot;: 100
+        }
+      ],
+      &quot;currency&quot;: &quot;GTQ&quot;,
+      &quot;totalCents&quot;: 100,
+      &quot;status&quot;: &quot;pending&quot;,
+      &quot;version&quot;: 1,
+      &quot;createdAt&quot;: &quot;2026-10-17T01:55:20.940Z&quot;,
+      &quot;updatedAt&quot;: &quot;2026-10-17T01:55:20.940Z&quot;
+    }
+  ],
+  &quot;pagination&quot;: {
+    &quot;page&quot;: 1,
+    &quot;limit&quot;: 2,
+    &quot;total&quot;: 5,
+    &quot;totalPages&quot;: 3
+  }
+}</pre><ul><li>PASS | TC-10 | HTTP 200</li><li>PASS | TC-10 | correlación y caché</li><li>PASS | TC-10 | Content-Type JSON</li><li>PASS | TC-10 | esquema OrderList</li><li>PASS | TC-10 | límites y total</li></ul><h3>TC-10 | Página dos sin duplicados</h3><p>GET /orders?page=2&amp;limit=2 — HTTP 200</p><pre>{
+  &quot;data&quot;: [
+    {
+      &quot;id&quot;: 3,
+      &quot;ownerId&quot;: 1,
+      &quot;items&quot;: [
+        {
+          &quot;product&quot;: &quot;Dato paginado 2&quot;,
+          &quot;quantity&quot;: 2,
+          &quot;unitPriceCents&quot;: 100
+        }
+      ],
+      &quot;currency&quot;: &quot;GTQ&quot;,
+      &quot;totalCents&quot;: 200,
+      &quot;status&quot;: &quot;pending&quot;,
+      &quot;version&quot;: 1,
+      &quot;createdAt&quot;: &quot;2026-10-17T01:55:21.065Z&quot;,
+      &quot;updatedAt&quot;: &quot;2026-10-17T01:55:21.065Z&quot;
+    },
+    {
+      &quot;id&quot;: 4,
+      &quot;ownerId&quot;: 1,
+      &quot;items&quot;: [
+        {
+          &quot;product&quot;: &quot;Dato paginado 3&quot;,
+          &quot;quantity&quot;: 3,
+          &quot;unitPriceCents&quot;: 100
+        }
+      ],
+      &quot;currency&quot;: &quot;GTQ&quot;,
+      &quot;totalCents&quot;: 300,
+      &quot;status&quot;: &quot;pending&quot;,
+      &quot;version&quot;: 1,
+      &quot;createdAt&quot;: &quot;2026-10-17T01:55:21.189Z&quot;,
+      &quot;updatedAt&quot;: &quot;2026-10-17T01:55:21.189Z&quot;
+    }
+  ],
+  &quot;pagination&quot;: {
+    &quot;page&quot;: 2,
+    &quot;limit&quot;: 2,
+    &quot;total&quot;: 5,
+    &quot;totalPages&quot;: 3
+  }
+}</pre><ul><li>PASS | TC-10 | HTTP 200</li><li>PASS | TC-10 | correlación y caché</li><li>PASS | TC-10 | Content-Type JSON</li><li>PASS | TC-10 | esquema OrderList</li><li>PASS | TC-10 | páginas distintas ordenadas</li></ul><h3>TC-10 | Página fuera del rango</h3><p>GET /orders?page=1000000&amp;limit=2 — HTTP 200</p><pre>{
+  &quot;data&quot;: [],
+  &quot;pagination&quot;: {
+    &quot;page&quot;: 1000000,
+    &quot;limit&quot;: 2,
+    &quot;total&quot;: 5,
+    &quot;totalPages&quot;: 3
+  }
+}</pre><ul><li>PASS | TC-10 | HTTP 200</li><li>PASS | TC-10 | correlación y caché</li><li>PASS | TC-10 | Content-Type JSON</li><li>PASS | TC-10 | esquema OrderList</li><li>PASS | TC-10 | fuera de rango conserva metadatos</li></ul><h3>TC-11 | Primera aplicación PUT</h3><p>PUT /orders/1/status — HTTP 200</p><pre>{
+  &quot;id&quot;: 1,
+  &quot;ownerId&quot;: 1,
+  &quot;items&quot;: [
+    {
+      &quot;product&quot;: &quot;Cuaderno ficticio&quot;,
+      &quot;quantity&quot;: 2,
+      &quot;unitPriceCents&quot;: 1250
+    }
+  ],
+  &quot;currency&quot;: &quot;GTQ&quot;,
+  &quot;totalCents&quot;: 2500,
+  &quot;status&quot;: &quot;confirmed&quot;,
+  &quot;version&quot;: 2,
+  &quot;createdAt&quot;: &quot;2026-10-17T01:55:19.504Z&quot;,
+  &quot;updatedAt&quot;: &quot;2026-10-17T01:55:21.820Z&quot;
+}</pre><ul><li>PASS | TC-11 | HTTP 200</li><li>PASS | TC-11 | correlación y caché</li><li>PASS | TC-11 | Content-Type JSON</li><li>PASS | TC-11 | esquema Order</li><li>PASS | TC-11 | transición real</li></ul><h3>TC-11 | Repetición PUT idéntico</h3><p>PUT /orders/1/status — HTTP 200</p><pre>{
+  &quot;id&quot;: 1,
+  &quot;ownerId&quot;: 1,
+  &quot;items&quot;: [
+    {
+      &quot;product&quot;: &quot;Cuaderno ficticio&quot;,
+      &quot;quantity&quot;: 2,
+      &quot;unitPriceCents&quot;: 1250
+    }
+  ],
+  &quot;currency&quot;: &quot;GTQ&quot;,
+  &quot;totalCents&quot;: 2500,
+  &quot;status&quot;: &quot;confirmed&quot;,
+  &quot;version&quot;: 2,
+  &quot;createdAt&quot;: &quot;2026-10-17T01:55:19.504Z&quot;,
+  &quot;updatedAt&quot;: &quot;2026-10-17T01:55:21.820Z&quot;
+}</pre><ul><li>PASS | TC-11 | HTTP 200</li><li>PASS | TC-11 | correlación y caché</li><li>PASS | TC-11 | Content-Type JSON</li><li>PASS | TC-11 | esquema Order</li><li>PASS | TC-11 | sin segunda mutación</li></ul><h3>TC-11 | Estado persistido después de repetir PUT</h3><p>GET /orders/1 — HTTP 200</p><pre>{
+  &quot;id&quot;: 1,
+  &quot;ownerId&quot;: 1,
+  &quot;items&quot;: [
+    {
+      &quot;product&quot;: &quot;Cuaderno ficticio&quot;,
+      &quot;quantity&quot;: 2,
+      &quot;unitPriceCents&quot;: 1250
+    }
+  ],
+  &quot;currency&quot;: &quot;GTQ&quot;,
+  &quot;totalCents&quot;: 2500,
+  &quot;status&quot;: &quot;confirmed&quot;,
+  &quot;version&quot;: 2,
+  &quot;createdAt&quot;: &quot;2026-10-17T01:55:19.504Z&quot;,
+  &quot;updatedAt&quot;: &quot;2026-10-17T01:55:21.820Z&quot;
+}</pre><ul><li>PASS | TC-11 | HTTP 200</li><li>PASS | TC-11 | correlación y caché</li><li>PASS | TC-11 | Content-Type JSON</li><li>PASS | TC-11 | esquema Order</li><li>PASS | TC-11 | estado final persistido idéntico</li></ul><h3>TC-12 | Contrato de error y estado fuera del enum</h3><p>PUT /orders/1/status — HTTP 400</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;VALIDATION_ERROR&quot;,
+    &quot;message&quot;: &quot;La solicitud contiene datos inválidos.&quot;,
+    &quot;details&quot;: [
+      &quot;/status: enum&quot;
+    ],
+    &quot;requestId&quot;: &quot;0355d916-490c-40f7-917b-b64acebfb9a4&quot;
+  }
+}</pre><ul><li>PASS | TC-12 | HTTP 400</li><li>PASS | TC-12 | correlación y caché</li><li>PASS | TC-12 | Content-Type JSON</li><li>PASS | TC-12 | esquema Error</li><li>PASS | TC-12 | error correlacionado</li><li>PASS | TC-12 | esquema de error y restricción enum</li></ul><h3>TC-12 | Esquema de éxito tras error sin mutación</h3><p>GET /orders/1 — HTTP 200</p><pre>{
+  &quot;id&quot;: 1,
+  &quot;ownerId&quot;: 1,
+  &quot;items&quot;: [
+    {
+      &quot;product&quot;: &quot;Cuaderno ficticio&quot;,
+      &quot;quantity&quot;: 2,
+      &quot;unitPriceCents&quot;: 1250
+    }
+  ],
+  &quot;currency&quot;: &quot;GTQ&quot;,
+  &quot;totalCents&quot;: 2500,
+  &quot;status&quot;: &quot;confirmed&quot;,
+  &quot;version&quot;: 2,
+  &quot;createdAt&quot;: &quot;2026-10-17T01:55:19.504Z&quot;,
+  &quot;updatedAt&quot;: &quot;2026-10-17T01:55:21.820Z&quot;
+}</pre><ul><li>PASS | TC-12 | HTTP 200</li><li>PASS | TC-12 | correlación y caché</li><li>PASS | TC-12 | Content-Type JSON</li><li>PASS | TC-12 | esquema Order</li><li>PASS | TC-12 | contrato de éxito y atomicidad</li></ul><h3>TC-13 | Contraseña de autenticación incorrecta</h3><p>POST /auth/login — HTTP 401</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;INVALID_CREDENTIALS&quot;,
+    &quot;message&quot;: &quot;Credenciales de prueba incorrectas.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;62678358-4e24-42af-954e-29d6ddde6cb0&quot;
+  }
+}</pre><ul><li>PASS | TC-13 | HTTP 401</li><li>PASS | TC-13 | correlación y caché</li><li>PASS | TC-13 | Content-Type JSON</li><li>PASS | TC-13 | esquema Error</li><li>PASS | TC-13 | error correlacionado</li><li>PASS | TC-13 | credenciales rechazadas</li></ul><h3>TC-14 | Paginación inválida page=0</h3><p>GET /orders?page=0 — HTTP 400</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;VALIDATION_ERROR&quot;,
+    &quot;message&quot;: &quot;Paginación inválida.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;bc5f8170-0ccb-44ed-9107-3bbe38301a64&quot;
+  }
+}</pre><ul><li>PASS | TC-14 | HTTP 400</li><li>PASS | TC-14 | correlación y caché</li><li>PASS | TC-14 | Content-Type JSON</li><li>PASS | TC-14 | esquema Error</li><li>PASS | TC-14 | error correlacionado</li><li>PASS | TC-14 | rechazo de paginación</li></ul><h3>TC-14 | Paginación inválida page=1.5</h3><p>GET /orders?page=1.5 — HTTP 400</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;VALIDATION_ERROR&quot;,
+    &quot;message&quot;: &quot;Paginación inválida.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;510dd231-d23e-46ab-88e7-6f33d169966c&quot;
+  }
+}</pre><ul><li>PASS | TC-14 | HTTP 400</li><li>PASS | TC-14 | correlación y caché</li><li>PASS | TC-14 | Content-Type JSON</li><li>PASS | TC-14 | esquema Error</li><li>PASS | TC-14 | error correlacionado</li><li>PASS | TC-14 | rechazo de paginación</li></ul><h3>TC-14 | Paginación inválida limit=51</h3><p>GET /orders?limit=51 — HTTP 400</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;VALIDATION_ERROR&quot;,
+    &quot;message&quot;: &quot;page debe ser 1..1000000 y limit 1..50.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;3f2c02e0-e981-4da0-8eae-8942bc508a75&quot;
+  }
+}</pre><ul><li>PASS | TC-14 | HTTP 400</li><li>PASS | TC-14 | correlación y caché</li><li>PASS | TC-14 | Content-Type JSON</li><li>PASS | TC-14 | esquema Error</li><li>PASS | TC-14 | error correlacionado</li><li>PASS | TC-14 | rechazo de paginación</li></ul><h3>TC-14 | Paginación inválida limit=0</h3><p>GET /orders?limit=0 — HTTP 400</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;VALIDATION_ERROR&quot;,
+    &quot;message&quot;: &quot;Paginación inválida.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;121ca92a-0ebc-4302-9f41-f551cbbad327&quot;
+  }
+}</pre><ul><li>PASS | TC-14 | HTTP 400</li><li>PASS | TC-14 | correlación y caché</li><li>PASS | TC-14 | Content-Type JSON</li><li>PASS | TC-14 | esquema Error</li><li>PASS | TC-14 | error correlacionado</li><li>PASS | TC-14 | rechazo de paginación</li></ul><h3>TC-14 | Paginación inválida page=abc</h3><p>GET /orders?page=abc — HTTP 400</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;VALIDATION_ERROR&quot;,
+    &quot;message&quot;: &quot;Paginación inválida.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;adee49b8-797c-4568-9cea-ecc964ba8512&quot;
+  }
+}</pre><ul><li>PASS | TC-14 | HTTP 400</li><li>PASS | TC-14 | correlación y caché</li><li>PASS | TC-14 | Content-Type JSON</li><li>PASS | TC-14 | esquema Error</li><li>PASS | TC-14 | error correlacionado</li><li>PASS | TC-14 | rechazo de paginación</li></ul><h3>TC-14 | Paginación inválida page=1&amp;page=2</h3><p>GET /orders?page=1&amp;page=2 — HTTP 400</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;VALIDATION_ERROR&quot;,
+    &quot;message&quot;: &quot;Paginación inválida.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;3d676fc0-8d25-4364-a231-48e60181456e&quot;
+  }
+}</pre><ul><li>PASS | TC-14 | HTTP 400</li><li>PASS | TC-14 | correlación y caché</li><li>PASS | TC-14 | Content-Type JSON</li><li>PASS | TC-14 | esquema Error</li><li>PASS | TC-14 | error correlacionado</li><li>PASS | TC-14 | rechazo de paginación</li></ul><h3>TC-14 | Paginación inválida unexpected=1</h3><p>GET /orders?unexpected=1 — HTTP 400</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;VALIDATION_ERROR&quot;,
+    &quot;message&quot;: &quot;Paginación inválida.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;54431235-e976-4cfe-89f2-6b5f68a8e84b&quot;
+  }
+}</pre><ul><li>PASS | TC-14 | HTTP 400</li><li>PASS | TC-14 | correlación y caché</li><li>PASS | TC-14 | Content-Type JSON</li><li>PASS | TC-14 | esquema Error</li><li>PASS | TC-14 | error correlacionado</li><li>PASS | TC-14 | rechazo de paginación</li></ul><h3>TC-16 | JSON malformado</h3><p>POST /orders — HTTP 400</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;INVALID_JSON&quot;,
+    &quot;message&quot;: &quot;El cuerpo no es JSON válido.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;57f3bdf1-00fa-4d15-9f22-e5dc976e0c15&quot;
+  }
+}</pre><ul><li>PASS | TC-16 | HTTP 400</li><li>PASS | TC-16 | correlación y caché</li><li>PASS | TC-16 | Content-Type JSON</li><li>PASS | TC-16 | esquema Error</li><li>PASS | TC-16 | error correlacionado</li><li>PASS | TC-16 | error de sintaxis estructurado</li></ul><h3>TC-17 | Rechazo de asignación de propietario</h3><p>POST /orders — HTTP 400</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;VALIDATION_ERROR&quot;,
+    &quot;message&quot;: &quot;La solicitud contiene datos inválidos.&quot;,
+    &quot;details&quot;: [
+      &quot;/: additionalProperties&quot;
+    ],
+    &quot;requestId&quot;: &quot;8dc8fc2b-91b3-4454-a8f5-a2a3d7368700&quot;
+  }
+}</pre><ul><li>PASS | TC-17 | HTTP 400</li><li>PASS | TC-17 | correlación y caché</li><li>PASS | TC-17 | Content-Type JSON</li><li>PASS | TC-17 | esquema Error</li><li>PASS | TC-17 | error correlacionado</li><li>PASS | TC-17 | campos adicionales rechazados</li></ul><h3>TC-18 | Listado aislado del usuario B</h3><p>GET /orders — HTTP 200</p><pre>{
+  &quot;data&quot;: [],
+  &quot;pagination&quot;: {
+    &quot;page&quot;: 1,
+    &quot;limit&quot;: 10,
+    &quot;total&quot;: 0,
+    &quot;totalPages&quot;: 0
+  }
+}</pre><ul><li>PASS | TC-18 | HTTP 200</li><li>PASS | TC-18 | correlación y caché</li><li>PASS | TC-18 | Content-Type JSON</li><li>PASS | TC-18 | esquema OrderList</li><li>PASS | TC-18 | cero pedidos ajenos expuestos</li></ul><h3>TC-15 | Eliminar pedido propio</h3><p>DELETE /orders/1 — HTTP 204</p><pre>&quot;&quot;</pre><ul><li>PASS | TC-15 | HTTP 204</li><li>PASS | TC-15 | correlación y caché</li><li>PASS | TC-15 | cuerpo vacío</li></ul><h3>TC-15 | Repetir eliminación</h3><p>DELETE /orders/1 — HTTP 204</p><pre>&quot;&quot;</pre><ul><li>PASS | TC-15 | HTTP 204</li><li>PASS | TC-15 | correlación y caché</li><li>PASS | TC-15 | cuerpo vacío</li></ul><h3>TC-15 | Confirmar ausencia final</h3><p>GET /orders/1 — HTTP 404</p><pre>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;NOT_FOUND&quot;,
+    &quot;message&quot;: &quot;El pedido no existe.&quot;,
+    &quot;details&quot;: [],
+    &quot;requestId&quot;: &quot;4610d39d-4f87-4b51-a78d-fdb680807680&quot;
+  }
+}</pre><ul><li>PASS | TC-15 | HTTP 404</li><li>PASS | TC-15 | correlación y caché</li><li>PASS | TC-15 | Content-Type JSON</li><li>PASS | TC-15 | esquema Error</li><li>PASS | TC-15 | error correlacionado</li><li>PASS | TC-15 | ausencia persistida</li></ul><h3>CLEANUP | Eliminar dato paginación 1</h3><p>DELETE /orders/2 — HTTP 204</p><pre>&quot;&quot;</pre><ul><li>PASS | CLEANUP | HTTP 204</li><li>PASS | CLEANUP | correlación y caché</li><li>PASS | CLEANUP | cuerpo vacío</li></ul><h3>CLEANUP | Eliminar dato paginación 2</h3><p>DELETE /orders/3 — HTTP 204</p><pre>&quot;&quot;</pre><ul><li>PASS | CLEANUP | HTTP 204</li><li>PASS | CLEANUP | correlación y caché</li><li>PASS | CLEANUP | cuerpo vacío</li></ul><h3>CLEANUP | Eliminar dato paginación 3</h3><p>DELETE /orders/4 — HTTP 204</p><pre>&quot;&quot;</pre><ul><li>PASS | CLEANUP | HTTP 204</li><li>PASS | CLEANUP | correlación y caché</li><li>PASS | CLEANUP | cuerpo vacío</li></ul><h3>CLEANUP | Eliminar dato paginación 4</h3><p>DELETE /orders/5 — HTTP 204</p><pre>&quot;&quot;</pre><ul><li>PASS | CLEANUP | HTTP 204</li><li>PASS | CLEANUP | correlación y caché</li><li>PASS | CLEANUP | cuerpo vacío</li></ul><h3>CLEANUP | Sin residuos de ejecución</h3><p>GET /orders — HTTP 200</p><pre>{
+  &quot;data&quot;: [],
+  &quot;pagination&quot;: {
+    &quot;page&quot;: 1,
+    &quot;limit&quot;: 10,
+    &quot;total&quot;: 0,
+    &quot;totalPages&quot;: 0
+  }
+}</pre><ul><li>PASS | CLEANUP | HTTP 200</li><li>PASS | CLEANUP | correlación y caché</li><li>PASS | CLEANUP | Content-Type JSON</li><li>PASS | CLEANUP | esquema OrderList</li><li>PASS | CLEANUP | cero pedidos</li></ul></section></html>

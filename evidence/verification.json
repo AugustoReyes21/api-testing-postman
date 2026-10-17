@@ -1,0 +1,27 @@
+{
+  "startedAt": "2026-10-17T01:55:00.375Z",
+  "contractSHA256": "faf8e8f47ec28fa1d89c555fe6cbe3b3ce19b6b6f5a1347cf3cf71ae77afcfa9",
+  "runs": [
+    {
+      "label": "baseline",
+      "success": true
+    },
+    {
+      "label": "controlled-defect",
+      "success": false,
+      "expectedFailure": true
+    },
+    {
+      "label": "corrected",
+      "success": true
+    },
+    {
+      "label": "clean-repeat",
+      "success": true
+    }
+  ],
+  "finishedAt": "2026-10-17T01:55:25.357Z",
+  "implementationRestored": true,
+  "contractUnchanged": true,
+  "success": true
+}

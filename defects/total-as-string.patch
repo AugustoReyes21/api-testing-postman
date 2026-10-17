@@ -1,0 +1,11 @@
+--- a/src/app.mjs
++++ b/src/app.mjs
+@@ -11,7 +11,7 @@
+ const validators = Object.fromEntries(['LoginInput', 'OrderInput', 'StatusInput'].map(name => [name, ajv.compile(spec.components.schemas[name])]));
+ const parseRow = row => ({
+   id: Number(row.id), ownerId: Number(row.owner_id), items: JSON.parse(row.items),
+-  currency: row.currency, totalCents: Number(row.total_cents), status: row.status,
++  currency: row.currency, totalCents: String(row.total_cents), status: row.status,
+   version: Number(row.version), createdAt: row.created_at, updatedAt: row.updated_at,
+ });
+ 

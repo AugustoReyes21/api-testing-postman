@@ -1,0 +1,18 @@
+{
+  "tool": "Postman desktop",
+  "version": "12.32.4",
+  "method": "Aplicación Windows controlada con SendKeys, ratón y capturas CopyFromScreen; no se utilizó una interfaz simulada.",
+  "collectionImported": true,
+  "exampleEnvironmentImported": true,
+  "localFictionalEnvironmentImported": true,
+  "functionalCaseCount": 18,
+  "requestCount": 46,
+  "runsObserved": [
+    { "phase": "baseline", "assertions": 234, "passed": 234, "failed": 0, "errors": 0 },
+    { "phase": "controlled-defect", "localTime": "2026-10-16 19:39:13 America/Guatemala", "assertions": 234, "passed": 219, "failed": 15, "errors": 0, "screenshot": "evidence/screenshots/postman-controlled-defect.png" },
+    { "phase": "corrected", "localTime": "2026-10-16 19:40:12 America/Guatemala", "assertions": 234, "passed": 234, "failed": 0, "errors": 0, "screenshot": "evidence/screenshots/postman-corrected-summary.png" },
+    { "phase": "final-code-recheck", "localTime": "2026-10-16 19:53:53 America/Guatemala", "assertions": 234, "passed": 234, "failed": 0, "errors": 0, "screenshot": "evidence/screenshots/postman-final.png" }
+  ],
+  "export": { "jsonExportedFromDesktop": false, "reason": "La interfaz mostró Upgrade to export collection run results. No se cambió el plan.", "reusableAlternative": "evidence/runs/*.json (Newman, sanitizado)" },
+  "note": "Registro de observación de la interfaz respaldado por capturas; este archivo no se presenta como exportación del Runner. Los conteos funcionales se obtienen de la matriz y los IDs de la colección, no del número de aserciones."
+}

@@ -14,3 +14,10 @@ reports/
 Thumbs.db
 .idea/
 .vscode/
+node_modules/
+.runtime/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+artifacts/pdf-pages/
+__pycache__/

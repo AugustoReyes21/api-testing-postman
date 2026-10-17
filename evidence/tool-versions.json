@@ -1,0 +1,34 @@
+{
+  "recordedAt": "2026-10-17T01:52:51.538Z",
+  "platform": "win32",
+  "node": "v24.18.0",
+  "npm": "11.16.0",
+  "git": "git version 2.55.0.windows.3",
+  "python": "Python 3.12.10",
+  "sqlite": "3.53.1",
+  "packages": {
+    "express": "5.3.0",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "newman": "6.2.3",
+    "@apidevtools/swagger-parser": "13.1.0",
+    "@redocly/cli": "2.64.1",
+    "playwright-core": "1.64.1"
+  },
+  "postman": {
+    "version": "12.32.4",
+    "source": "VersionInfo del ejecutable instalado; colección importada y ejecutada mediante la ventana real."
+  },
+  "word": "16.0 disponible; exportación COM no finalizó; sesión de esta tarea cerrada sin guardar",
+  "pdf": "DOCX fuente convertido con ReportLab 5.0.0; render y revisión con PyMuPDF 1.28.0",
+  "claude": {
+    "available": false,
+    "checks": [
+      "claude --version no encontrado",
+      "PATH sin ejecutable",
+      "Sin ejecutable en .local/bin, .claude/local, npm global y WinGet Links"
+    ],
+    "authentication": "No comprobable sin ejecutable",
+    "participated": false
+  }
+}

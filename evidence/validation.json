@@ -1,0 +1,30 @@
+{
+  "at": "2026-10-17T01:55:00.491Z",
+  "openapi": "3.1.0",
+  "validator": "@apidevtools/swagger-parser + Ajv2020 (esquemas)",
+  "valid": true,
+  "schemaCount": 8,
+  "operationCount": 7,
+  "collectionFormat": "2.1.0",
+  "requestCount": 46,
+  "cases": [
+    "TC-01",
+    "TC-02",
+    "TC-03",
+    "TC-04",
+    "TC-05",
+    "TC-06",
+    "TC-07",
+    "TC-08",
+    "TC-09",
+    "TC-10",
+    "TC-11",
+    "TC-12",
+    "TC-13",
+    "TC-14",
+    "TC-15",
+    "TC-16",
+    "TC-17",
+    "TC-18"
+  ]
+}

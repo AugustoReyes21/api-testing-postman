@@ -1,0 +1,78 @@
+{
+  "createdAt": "2026-10-17T01:56:04.663Z",
+  "description": "Capturas postman-*: ventana real de Postman 12.32.4 mediante CopyFromScreen, recortada antes de guardar. Capturas newman-*: navegador Chromium mostrando los datos reales del reporte Newman; no son interfaz Postman.",
+  "files": [
+    {
+      "path": "evidence/screenshots/newman-idempotency-state.png",
+      "sha256": "d911fe378108d0e086eede0bac103e156c819338ed16fd95ef49c319ef240f03"
+    },
+    {
+      "path": "evidence/screenshots/newman-runs.png",
+      "sha256": "000af6c23b9ac6248254987ce9e89b302aa5b2ff5c51fd56bfea2fff8d493adc"
+    },
+    {
+      "path": "evidence/screenshots/postman-access-control.png",
+      "sha256": "6373aa25dec270d62c53e3946bf7b3496cc5b4b2bb8c6b4de777b232c9936f5e"
+    },
+    {
+      "path": "evidence/screenshots/postman-auth-errors.png",
+      "sha256": "1159031fdcd7039bb311908faf8b45801b1cd226f7bc32d5b371a72db4336281"
+    },
+    {
+      "path": "evidence/screenshots/postman-collection.png",
+      "sha256": "1ae810b01674c7b9acc3d3f3e64b2df87002110f30b6eb0bbe5f4a2251686db5"
+    },
+    {
+      "path": "evidence/screenshots/postman-controlled-defect-focus.png",
+      "sha256": "dd876e7c56e037c7ed1692148ac03cbf338faac6309985fcb3995c62f671effe"
+    },
+    {
+      "path": "evidence/screenshots/postman-controlled-defect.png",
+      "sha256": "e8d8ea6ae0264c071c04121f56e9bb0bbbbe61b5f093b311ba9b05a82b707fb5"
+    },
+    {
+      "path": "evidence/screenshots/postman-corrected-summary.png",
+      "sha256": "bdd6599d2be12250d7fb32d01ca3fa8721d0fcccdd324eb973da870f651aa3a5"
+    },
+    {
+      "path": "evidence/screenshots/postman-corrected.png",
+      "sha256": "af3b6fba6ea00f2d1824ece4f8e9c7669a56a3a1d674970a06bc0bf283e7eab0"
+    },
+    {
+      "path": "evidence/screenshots/postman-create.png",
+      "sha256": "9b7614df0122aa3cdd3225465840e3781014a68ff85cf77c009e06fbc1869faa"
+    },
+    {
+      "path": "evidence/screenshots/postman-environment-example.png",
+      "sha256": "837ec633ac2a8ff5f86b2abbe25e46ca477496d890e9dd138eb2c7fd8b451e3f"
+    },
+    {
+      "path": "evidence/screenshots/postman-environment-local.png",
+      "sha256": "f1459d53e1514189bb808d6ee989d4322f6aaa7b5f34d03e0e3e7dda82b9d2ee"
+    },
+    {
+      "path": "evidence/screenshots/postman-final.png",
+      "sha256": "86b281c0fd6ee172fafecc360e3995e8d3aad7c71b27aa699208d634f7606e63"
+    },
+    {
+      "path": "evidence/screenshots/postman-grid-cases.png",
+      "sha256": "2f87885e2ba01412ffb5decd3191b553fb544c3cbd634c1a3789f18266ab5b00"
+    },
+    {
+      "path": "evidence/screenshots/postman-idempotency.png",
+      "sha256": "8ca3f3c3631607beb56d60457b1c94e644dbef1948c9d6428f55fd0ae502298a"
+    },
+    {
+      "path": "evidence/screenshots/postman-pagination-idempotency-grid.png",
+      "sha256": "3e5ba8ade3c97f40c0c1162d9b6113c907ba500cf301cc83c0b8caf76599e30f"
+    },
+    {
+      "path": "evidence/screenshots/postman-persistence.png",
+      "sha256": "a65c6e3541048b1f657ec92fd5da279f1f80cd2443441c167215ad80af26bab4"
+    },
+    {
+      "path": "evidence/screenshots/postman-validation-error.png",
+      "sha256": "e3a0c33f7e97cca9b910eecffe1f39b2e10a01272870db5c4dca028b903c76b7"
+    }
+  ]
+}

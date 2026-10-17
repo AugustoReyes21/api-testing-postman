@@ -1,0 +1,1913 @@
+{
+  "label": "clean-repeat",
+  "startedAt": "2026-10-17T01:55:18.963Z",
+  "finishedAt": "2026-10-17T01:55:24.695Z",
+  "runner": "Newman",
+  "newmanVersion": "6.2.3",
+  "cases": [
+    "TC-01",
+    "TC-02",
+    "TC-03",
+    "TC-04",
+    "TC-05",
+    "TC-06",
+    "TC-07",
+    "TC-08",
+    "TC-09",
+    "TC-10",
+    "TC-11",
+    "TC-12",
+    "TC-13",
+    "TC-14",
+    "TC-15",
+    "TC-16",
+    "TC-17",
+    "TC-18"
+  ],
+  "caseCount": 18,
+  "requestCount": 46,
+  "assertionCount": 234,
+  "assertionsFailed": 0,
+  "assertionsPassed": 234,
+  "runtimeFailures": [],
+  "contractCheckCount": 46,
+  "contractFailures": [],
+  "success": true,
+  "executions": [
+    {
+      "name": "SETUP | API disponible",
+      "method": "GET",
+      "path": "/health",
+      "status": 200,
+      "body": {
+        "status": "ok",
+        "storage": "sqlite"
+      },
+      "assertions": [
+        {
+          "name": "SETUP | HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "SETUP | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "SETUP | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "SETUP | esquema Health",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-01 | Autenticación válida A",
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 200,
+      "body": {
+        "accessToken": "[REDACTED]",
+        "tokenType": "Bearer",
+        "expiresIn": 3600,
+        "user": {
+          "id": 1,
+          "email": "ana@example.test"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-01 | HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "TC-01 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-01 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-01 | esquema Login",
+          "passed": true
+        },
+        {
+          "name": "TC-01 | usuario A",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "SETUP | Autenticación válida B",
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 200,
+      "body": {
+        "accessToken": "[REDACTED]",
+        "tokenType": "Bearer",
+        "expiresIn": 3600,
+        "user": {
+          "id": 2,
+          "email": "bruno@example.test"
+        }
+      },
+      "assertions": [
+        {
+          "name": "SETUP | HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "SETUP | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "SETUP | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "SETUP | esquema Login",
+          "passed": true
+        },
+        {
+          "name": "SETUP | usuarios distintos",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-02 | Crear pedido",
+      "method": "POST",
+      "path": "/orders",
+      "status": 201,
+      "body": {
+        "id": 1,
+        "ownerId": 1,
+        "items": [
+          {
+            "product": "Cuaderno ficticio",
+            "quantity": 2,
+            "unitPriceCents": 1250
+          }
+        ],
+        "currency": "GTQ",
+        "totalCents": 2500,
+        "status": "pending",
+        "version": 1,
+        "createdAt": "2026-10-17T01:55:19.504Z",
+        "updatedAt": "2026-10-17T01:55:19.504Z"
+      },
+      "assertions": [
+        {
+          "name": "TC-02 | HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "TC-02 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-02 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-02 | esquema Order",
+          "passed": true
+        },
+        {
+          "name": "TC-02 | importe calculado y propietario",
+          "passed": true
+        },
+        {
+          "name": "TC-02 | Location",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-03 | Persistencia por consulta posterior",
+      "method": "GET",
+      "path": "/orders/1",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "ownerId": 1,
+        "items": [
+          {
+            "product": "Cuaderno ficticio",
+            "quantity": 2,
+            "unitPriceCents": 1250
+          }
+        ],
+        "currency": "GTQ",
+        "totalCents": 2500,
+        "status": "pending",
+        "version": 1,
+        "createdAt": "2026-10-17T01:55:19.504Z",
+        "updatedAt": "2026-10-17T01:55:19.504Z"
+      },
+      "assertions": [
+        {
+          "name": "TC-03 | HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "TC-03 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-03 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-03 | esquema Order",
+          "passed": true
+        },
+        {
+          "name": "TC-03 | recurso idéntico al persistido",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-04 | Campo obligatorio ausente",
+      "method": "POST",
+      "path": "/orders",
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "La solicitud contiene datos inválidos.",
+          "details": [
+            "/: required"
+          ],
+          "requestId": "f9082c67-7533-49a3-ade5-6e8a156035b5"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-04 | HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "TC-04 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-04 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-04 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-04 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-04 | falta items",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-05 | Cantidad inválida",
+      "method": "POST",
+      "path": "/orders",
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "La solicitud contiene datos inválidos.",
+          "details": [
+            "/items/0/quantity: minimum"
+          ],
+          "requestId": "bf75af58-ce33-4bc3-8d88-dbe94ced7b0c"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-05 | HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "TC-05 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-05 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-05 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-05 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-05 | cantidad rechazada",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-06 | Sin credenciales",
+      "method": "GET",
+      "path": "/orders",
+      "status": 401,
+      "body": {
+        "error": {
+          "code": "UNAUTHORIZED",
+          "message": "Se requiere una sesión válida.",
+          "details": [],
+          "requestId": "0efd3228-7492-4963-8d23-94caeb3d943d"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-06 | HTTP 401",
+          "passed": true
+        },
+        {
+          "name": "TC-06 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-06 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-06 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-06 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-06 | desafío Bearer",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-07 | Token inválido",
+      "method": "GET",
+      "path": "/orders",
+      "status": 401,
+      "body": {
+        "error": {
+          "code": "UNAUTHORIZED",
+          "message": "Se requiere una sesión válida.",
+          "details": [],
+          "requestId": "06a29e3d-25d0-49b4-8623-13d13da13c52"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-07 | HTTP 401",
+          "passed": true
+        },
+        {
+          "name": "TC-07 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-07 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-07 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-07 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-07 | sesión rechazada",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-08 | Usuario B no puede GET pedido ajeno",
+      "method": "GET",
+      "path": "/orders/1",
+      "status": 403,
+      "body": {
+        "error": {
+          "code": "FORBIDDEN",
+          "message": "No tiene permiso para acceder a este pedido.",
+          "details": [],
+          "requestId": "523d64c0-7715-43da-94ae-07f291a7c508"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-08 | HTTP 403",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | permiso denegado",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-08 | Usuario B no puede PUT pedido ajeno",
+      "method": "PUT",
+      "path": "/orders/1/status",
+      "status": 403,
+      "body": {
+        "error": {
+          "code": "FORBIDDEN",
+          "message": "No tiene permiso para acceder a este pedido.",
+          "details": [],
+          "requestId": "9c3c5d98-7c5a-4dd6-a4b5-d49f67b462b2"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-08 | HTTP 403",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | permiso denegado",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-08 | Usuario B no puede DELETE pedido ajeno",
+      "method": "DELETE",
+      "path": "/orders/1",
+      "status": 403,
+      "body": {
+        "error": {
+          "code": "FORBIDDEN",
+          "message": "No tiene permiso para eliminar este pedido.",
+          "details": [],
+          "requestId": "d15a5828-739f-4c25-9b8a-e4ed53fd698b"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-08 | HTTP 403",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | permiso denegado",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-08 | Propietario verifica ausencia de cambios ajenos",
+      "method": "GET",
+      "path": "/orders/1",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "ownerId": 1,
+        "items": [
+          {
+            "product": "Cuaderno ficticio",
+            "quantity": 2,
+            "unitPriceCents": 1250
+          }
+        ],
+        "currency": "GTQ",
+        "totalCents": 2500,
+        "status": "pending",
+        "version": 1,
+        "createdAt": "2026-10-17T01:55:19.504Z",
+        "updatedAt": "2026-10-17T01:55:19.504Z"
+      },
+      "assertions": [
+        {
+          "name": "TC-08 | HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | esquema Order",
+          "passed": true
+        },
+        {
+          "name": "TC-08 | integridad después del intento ajeno",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-09 | Recurso inexistente",
+      "method": "GET",
+      "path": "/orders/9007199254740000",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "El pedido no existe.",
+          "details": [],
+          "requestId": "531ac149-7f89-4d00-8fa3-930d69f9bc0b"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-09 | HTTP 404",
+          "passed": true
+        },
+        {
+          "name": "TC-09 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-09 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-09 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-09 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-09 | inexistente",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-10 | Paginación base propia",
+      "method": "GET",
+      "path": "/orders?page=1&limit=50",
+      "status": 200,
+      "body": {
+        "data": [
+          {
+            "id": 1,
+            "ownerId": 1,
+            "items": [
+              {
+                "product": "Cuaderno ficticio",
+                "quantity": 2,
+                "unitPriceCents": 1250
+              }
+            ],
+            "currency": "GTQ",
+            "totalCents": 2500,
+            "status": "pending",
+            "version": 1,
+            "createdAt": "2026-10-17T01:55:19.504Z",
+            "updatedAt": "2026-10-17T01:55:19.504Z"
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "limit": 50,
+          "total": 1,
+          "totalPages": 1
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-10 | HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | esquema OrderList",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | solo recursos propios",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "SETUP | Crear dato paginación 1",
+      "method": "POST",
+      "path": "/orders",
+      "status": 201,
+      "body": {
+        "id": 2,
+        "ownerId": 1,
+        "items": [
+          {
+            "product": "Dato paginado 1",
+            "quantity": 1,
+            "unitPriceCents": 100
+          }
+        ],
+        "currency": "GTQ",
+        "totalCents": 100,
+        "status": "pending",
+        "version": 1,
+        "createdAt": "2026-10-17T01:55:20.940Z",
+        "updatedAt": "2026-10-17T01:55:20.940Z"
+      },
+      "assertions": [
+        {
+          "name": "SETUP | HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "SETUP | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "SETUP | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "SETUP | esquema Order",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "SETUP | Crear dato paginación 2",
+      "method": "POST",
+      "path": "/orders",
+      "status": 201,
+      "body": {
+        "id": 3,
+        "ownerId": 1,
+        "items": [
+          {
+            "product": "Dato paginado 2",
+            "quantity": 2,
+            "unitPriceCents": 100
+          }
+        ],
+        "currency": "GTQ",
+        "totalCents": 200,
+        "status": "pending",
+        "version": 1,
+        "createdAt": "2026-10-17T01:55:21.065Z",
+        "updatedAt": "2026-10-17T01:55:21.065Z"
+      },
+      "assertions": [
+        {
+          "name": "SETUP | HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "SETUP | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "SETUP | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "SETUP | esquema Order",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "SETUP | Crear dato paginación 3",
+      "method": "POST",
+      "path": "/orders",
+      "status": 201,
+      "body": {
+        "id": 4,
+        "ownerId": 1,
+        "items": [
+          {
+            "product": "Dato paginado 3",
+            "quantity": 3,
+            "unitPriceCents": 100
+          }
+        ],
+        "currency": "GTQ",
+        "totalCents": 300,
+        "status": "pending",
+        "version": 1,
+        "createdAt": "2026-10-17T01:55:21.189Z",
+        "updatedAt": "2026-10-17T01:55:21.189Z"
+      },
+      "assertions": [
+        {
+          "name": "SETUP | HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "SETUP | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "SETUP | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "SETUP | esquema Order",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "SETUP | Crear dato paginación 4",
+      "method": "POST",
+      "path": "/orders",
+      "status": 201,
+      "body": {
+        "id": 5,
+        "ownerId": 1,
+        "items": [
+          {
+            "product": "Dato paginado 4",
+            "quantity": 4,
+            "unitPriceCents": 100
+          }
+        ],
+        "currency": "GTQ",
+        "totalCents": 400,
+        "status": "pending",
+        "version": 1,
+        "createdAt": "2026-10-17T01:55:21.314Z",
+        "updatedAt": "2026-10-17T01:55:21.314Z"
+      },
+      "assertions": [
+        {
+          "name": "SETUP | HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "SETUP | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "SETUP | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "SETUP | esquema Order",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-10 | Página uno límite dos",
+      "method": "GET",
+      "path": "/orders?page=1&limit=2",
+      "status": 200,
+      "body": {
+        "data": [
+          {
+            "id": 1,
+            "ownerId": 1,
+            "items": [
+              {
+                "product": "Cuaderno ficticio",
+                "quantity": 2,
+                "unitPriceCents": 1250
+              }
+            ],
+            "currency": "GTQ",
+            "totalCents": 2500,
+            "status": "pending",
+            "version": 1,
+            "createdAt": "2026-10-17T01:55:19.504Z",
+            "updatedAt": "2026-10-17T01:55:19.504Z"
+          },
+          {
+            "id": 2,
+            "ownerId": 1,
+            "items": [
+              {
+                "product": "Dato paginado 1",
+                "quantity": 1,
+                "unitPriceCents": 100
+              }
+            ],
+            "currency": "GTQ",
+            "totalCents": 100,
+            "status": "pending",
+            "version": 1,
+            "createdAt": "2026-10-17T01:55:20.940Z",
+            "updatedAt": "2026-10-17T01:55:20.940Z"
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "limit": 2,
+          "total": 5,
+          "totalPages": 3
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-10 | HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | esquema OrderList",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | límites y total",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-10 | Página dos sin duplicados",
+      "method": "GET",
+      "path": "/orders?page=2&limit=2",
+      "status": 200,
+      "body": {
+        "data": [
+          {
+            "id": 3,
+            "ownerId": 1,
+            "items": [
+              {
+                "product": "Dato paginado 2",
+                "quantity": 2,
+                "unitPriceCents": 100
+              }
+            ],
+            "currency": "GTQ",
+            "totalCents": 200,
+            "status": "pending",
+            "version": 1,
+            "createdAt": "2026-10-17T01:55:21.065Z",
+            "updatedAt": "2026-10-17T01:55:21.065Z"
+          },
+          {
+            "id": 4,
+            "ownerId": 1,
+            "items": [
+              {
+                "product": "Dato paginado 3",
+                "quantity": 3,
+                "unitPriceCents": 100
+              }
+            ],
+            "currency": "GTQ",
+            "totalCents": 300,
+            "status": "pending",
+            "version": 1,
+            "createdAt": "2026-10-17T01:55:21.189Z",
+            "updatedAt": "2026-10-17T01:55:21.189Z"
+          }
+        ],
+        "pagination": {
+          "page": 2,
+          "limit": 2,
+          "total": 5,
+          "totalPages": 3
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-10 | HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | esquema OrderList",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | páginas distintas ordenadas",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-10 | Página fuera del rango",
+      "method": "GET",
+      "path": "/orders?page=1000000&limit=2",
+      "status": 200,
+      "body": {
+        "data": [],
+        "pagination": {
+          "page": 1000000,
+          "limit": 2,
+          "total": 5,
+          "totalPages": 3
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-10 | HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | esquema OrderList",
+          "passed": true
+        },
+        {
+          "name": "TC-10 | fuera de rango conserva metadatos",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-11 | Primera aplicación PUT",
+      "method": "PUT",
+      "path": "/orders/1/status",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "ownerId": 1,
+        "items": [
+          {
+            "product": "Cuaderno ficticio",
+            "quantity": 2,
+            "unitPriceCents": 1250
+          }
+        ],
+        "currency": "GTQ",
+        "totalCents": 2500,
+        "status": "confirmed",
+        "version": 2,
+        "createdAt": "2026-10-17T01:55:19.504Z",
+        "updatedAt": "2026-10-17T01:55:21.820Z"
+      },
+      "assertions": [
+        {
+          "name": "TC-11 | HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "TC-11 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-11 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-11 | esquema Order",
+          "passed": true
+        },
+        {
+          "name": "TC-11 | transición real",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-11 | Repetición PUT idéntico",
+      "method": "PUT",
+      "path": "/orders/1/status",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "ownerId": 1,
+        "items": [
+          {
+            "product": "Cuaderno ficticio",
+            "quantity": 2,
+            "unitPriceCents": 1250
+          }
+        ],
+        "currency": "GTQ",
+        "totalCents": 2500,
+        "status": "confirmed",
+        "version": 2,
+        "createdAt": "2026-10-17T01:55:19.504Z",
+        "updatedAt": "2026-10-17T01:55:21.820Z"
+      },
+      "assertions": [
+        {
+          "name": "TC-11 | HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "TC-11 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-11 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-11 | esquema Order",
+          "passed": true
+        },
+        {
+          "name": "TC-11 | sin segunda mutación",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-11 | Estado persistido después de repetir PUT",
+      "method": "GET",
+      "path": "/orders/1",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "ownerId": 1,
+        "items": [
+          {
+            "product": "Cuaderno ficticio",
+            "quantity": 2,
+            "unitPriceCents": 1250
+          }
+        ],
+        "currency": "GTQ",
+        "totalCents": 2500,
+        "status": "confirmed",
+        "version": 2,
+        "createdAt": "2026-10-17T01:55:19.504Z",
+        "updatedAt": "2026-10-17T01:55:21.820Z"
+      },
+      "assertions": [
+        {
+          "name": "TC-11 | HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "TC-11 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-11 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-11 | esquema Order",
+          "passed": true
+        },
+        {
+          "name": "TC-11 | estado final persistido idéntico",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-12 | Contrato de error y estado fuera del enum",
+      "method": "PUT",
+      "path": "/orders/1/status",
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "La solicitud contiene datos inválidos.",
+          "details": [
+            "/status: enum"
+          ],
+          "requestId": "0355d916-490c-40f7-917b-b64acebfb9a4"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-12 | HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "TC-12 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-12 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-12 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-12 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-12 | esquema de error y restricción enum",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-12 | Esquema de éxito tras error sin mutación",
+      "method": "GET",
+      "path": "/orders/1",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "ownerId": 1,
+        "items": [
+          {
+            "product": "Cuaderno ficticio",
+            "quantity": 2,
+            "unitPriceCents": 1250
+          }
+        ],
+        "currency": "GTQ",
+        "totalCents": 2500,
+        "status": "confirmed",
+        "version": 2,
+        "createdAt": "2026-10-17T01:55:19.504Z",
+        "updatedAt": "2026-10-17T01:55:21.820Z"
+      },
+      "assertions": [
+        {
+          "name": "TC-12 | HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "TC-12 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-12 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-12 | esquema Order",
+          "passed": true
+        },
+        {
+          "name": "TC-12 | contrato de éxito y atomicidad",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-13 | Contraseña de autenticación incorrecta",
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 401,
+      "body": {
+        "error": {
+          "code": "INVALID_CREDENTIALS",
+          "message": "Credenciales de prueba incorrectas.",
+          "details": [],
+          "requestId": "62678358-4e24-42af-954e-29d6ddde6cb0"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-13 | HTTP 401",
+          "passed": true
+        },
+        {
+          "name": "TC-13 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-13 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-13 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-13 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-13 | credenciales rechazadas",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-14 | Paginación inválida page=0",
+      "method": "GET",
+      "path": "/orders?page=0",
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "Paginación inválida.",
+          "details": [],
+          "requestId": "bc5f8170-0ccb-44ed-9107-3bbe38301a64"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-14 | HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | rechazo de paginación",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-14 | Paginación inválida page=1.5",
+      "method": "GET",
+      "path": "/orders?page=1.5",
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "Paginación inválida.",
+          "details": [],
+          "requestId": "510dd231-d23e-46ab-88e7-6f33d169966c"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-14 | HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | rechazo de paginación",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-14 | Paginación inválida limit=51",
+      "method": "GET",
+      "path": "/orders?limit=51",
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "page debe ser 1..1000000 y limit 1..50.",
+          "details": [],
+          "requestId": "3f2c02e0-e981-4da0-8eae-8942bc508a75"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-14 | HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | rechazo de paginación",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-14 | Paginación inválida limit=0",
+      "method": "GET",
+      "path": "/orders?limit=0",
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "Paginación inválida.",
+          "details": [],
+          "requestId": "121ca92a-0ebc-4302-9f41-f551cbbad327"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-14 | HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | rechazo de paginación",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-14 | Paginación inválida page=abc",
+      "method": "GET",
+      "path": "/orders?page=abc",
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "Paginación inválida.",
+          "details": [],
+          "requestId": "adee49b8-797c-4568-9cea-ecc964ba8512"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-14 | HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | rechazo de paginación",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-14 | Paginación inválida page=1&page=2",
+      "method": "GET",
+      "path": "/orders?page=1&page=2",
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "Paginación inválida.",
+          "details": [],
+          "requestId": "3d676fc0-8d25-4364-a231-48e60181456e"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-14 | HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | rechazo de paginación",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-14 | Paginación inválida unexpected=1",
+      "method": "GET",
+      "path": "/orders?unexpected=1",
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "Paginación inválida.",
+          "details": [],
+          "requestId": "54431235-e976-4cfe-89f2-6b5f68a8e84b"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-14 | HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-14 | rechazo de paginación",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-16 | JSON malformado",
+      "method": "POST",
+      "path": "/orders",
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "INVALID_JSON",
+          "message": "El cuerpo no es JSON válido.",
+          "details": [],
+          "requestId": "57f3bdf1-00fa-4d15-9f22-e5dc976e0c15"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-16 | HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "TC-16 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-16 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-16 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-16 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-16 | error de sintaxis estructurado",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-17 | Rechazo de asignación de propietario",
+      "method": "POST",
+      "path": "/orders",
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "La solicitud contiene datos inválidos.",
+          "details": [
+            "/: additionalProperties"
+          ],
+          "requestId": "8dc8fc2b-91b3-4454-a8f5-a2a3d7368700"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-17 | HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "TC-17 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-17 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-17 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-17 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-17 | campos adicionales rechazados",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-18 | Listado aislado del usuario B",
+      "method": "GET",
+      "path": "/orders",
+      "status": 200,
+      "body": {
+        "data": [],
+        "pagination": {
+          "page": 1,
+          "limit": 10,
+          "total": 0,
+          "totalPages": 0
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-18 | HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "TC-18 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-18 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-18 | esquema OrderList",
+          "passed": true
+        },
+        {
+          "name": "TC-18 | cero pedidos ajenos expuestos",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-15 | Eliminar pedido propio",
+      "method": "DELETE",
+      "path": "/orders/1",
+      "status": 204,
+      "body": "",
+      "assertions": [
+        {
+          "name": "TC-15 | HTTP 204",
+          "passed": true
+        },
+        {
+          "name": "TC-15 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-15 | cuerpo vacío",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-15 | Repetir eliminación",
+      "method": "DELETE",
+      "path": "/orders/1",
+      "status": 204,
+      "body": "",
+      "assertions": [
+        {
+          "name": "TC-15 | HTTP 204",
+          "passed": true
+        },
+        {
+          "name": "TC-15 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-15 | cuerpo vacío",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "TC-15 | Confirmar ausencia final",
+      "method": "GET",
+      "path": "/orders/1",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "El pedido no existe.",
+          "details": [],
+          "requestId": "4610d39d-4f87-4b51-a78d-fdb680807680"
+        }
+      },
+      "assertions": [
+        {
+          "name": "TC-15 | HTTP 404",
+          "passed": true
+        },
+        {
+          "name": "TC-15 | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "TC-15 | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "TC-15 | esquema Error",
+          "passed": true
+        },
+        {
+          "name": "TC-15 | error correlacionado",
+          "passed": true
+        },
+        {
+          "name": "TC-15 | ausencia persistida",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "CLEANUP | Eliminar dato paginación 1",
+      "method": "DELETE",
+      "path": "/orders/2",
+      "status": 204,
+      "body": "",
+      "assertions": [
+        {
+          "name": "CLEANUP | HTTP 204",
+          "passed": true
+        },
+        {
+          "name": "CLEANUP | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "CLEANUP | cuerpo vacío",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "CLEANUP | Eliminar dato paginación 2",
+      "method": "DELETE",
+      "path": "/orders/3",
+      "status": 204,
+      "body": "",
+      "assertions": [
+        {
+          "name": "CLEANUP | HTTP 204",
+          "passed": true
+        },
+        {
+          "name": "CLEANUP | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "CLEANUP | cuerpo vacío",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "CLEANUP | Eliminar dato paginación 3",
+      "method": "DELETE",
+      "path": "/orders/4",
+      "status": 204,
+      "body": "",
+      "assertions": [
+        {
+          "name": "CLEANUP | HTTP 204",
+          "passed": true
+        },
+        {
+          "name": "CLEANUP | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "CLEANUP | cuerpo vacío",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "CLEANUP | Eliminar dato paginación 4",
+      "method": "DELETE",
+      "path": "/orders/5",
+      "status": 204,
+      "body": "",
+      "assertions": [
+        {
+          "name": "CLEANUP | HTTP 204",
+          "passed": true
+        },
+        {
+          "name": "CLEANUP | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "CLEANUP | cuerpo vacío",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    },
+    {
+      "name": "CLEANUP | Sin residuos de ejecución",
+      "method": "GET",
+      "path": "/orders",
+      "status": 200,
+      "body": {
+        "data": [],
+        "pagination": {
+          "page": 1,
+          "limit": 10,
+          "total": 0,
+          "totalPages": 0
+        }
+      },
+      "assertions": [
+        {
+          "name": "CLEANUP | HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "CLEANUP | correlación y caché",
+          "passed": true
+        },
+        {
+          "name": "CLEANUP | Content-Type JSON",
+          "passed": true
+        },
+        {
+          "name": "CLEANUP | esquema OrderList",
+          "passed": true
+        },
+        {
+          "name": "CLEANUP | cero pedidos",
+          "passed": true
+        }
+      ],
+      "contractErrors": []
+    }
+  ]
+}
