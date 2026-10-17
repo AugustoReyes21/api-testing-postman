@@ -1,5 +1,5 @@
 {
-  "createdAt": "2026-10-17T01:56:04.663Z",
+  "createdAt": "2026-10-17T02:41:46.151Z",
   "description": "Capturas postman-*: ventana real de Postman 12.32.4 mediante CopyFromScreen, recortada antes de guardar. Capturas newman-*: navegador Chromium mostrando los datos reales del reporte Newman; no son interfaz Postman.",
   "files": [
     {
@@ -49,6 +49,10 @@
     {
       "path": "evidence/screenshots/postman-environment-local.png",
       "sha256": "f1459d53e1514189bb808d6ee989d4322f6aaa7b5f34d03e0e3e7dda82b9d2ee"
+    },
+    {
+      "path": "evidence/screenshots/postman-environment-variables.png",
+      "sha256": "094275584b6405c79412f7f16f9b7114c12597b5cc17d5ee5ca2f897e2d34281"
     },
     {
       "path": "evidence/screenshots/postman-final.png",

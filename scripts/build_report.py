@@ -27,6 +27,11 @@ source = SHOTS / "postman-controlled-defect.png"
 if source.exists():
     with Image.open(source) as im:
         im.crop((0, 0, 1060, 675)).save(SHOTS / "postman-controlled-defect-focus.png")
+source = SHOTS / "postman-environment-local.png"
+if source.exists():
+    # Recorte del encabezado de la captura original; se conservan todas las variables y valores ocultos.
+    with Image.open(source) as im:
+        im.crop((0, 60, im.width, im.height)).save(SHOTS / "postman-environment-variables.png")
 
 final = json.loads((ROOT / "evidence/runs/clean-repeat.json").read_text(encoding="utf-8"))
 bad = json.loads((ROOT / "evidence/runs/controlled-defect.json").read_text(encoding="utf-8"))
@@ -106,19 +111,19 @@ date = datetime.now(timezone(timedelta(hours=-6), name="America/Guatemala"))
 months = "enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre".split()
 p(f"Fecha de verificación: {date.day} de {months[date.month-1]} de {date.year}.")
 heading("1. Introducción")
-p("La práctica integra una API de pedidos y una colección que comprueba su comportamiento con datos ficticios. No basta con que el servidor responda: también se revisan los permisos, la persistencia, las reglas de entrada y el contrato de las respuestas. Las evidencias incluidas proceden de ejecuciones reales en Windows.")
+p("La práctica integra una API de pedidos y una colección que comprueba su comportamiento con datos de prueba. No basta con que el servidor responda: también se revisan los permisos, la persistencia, las reglas de entrada y el contrato de las respuestas. Las evidencias incluidas proceden de ejecuciones reales en Windows.")
 heading("2. Objetivo")
 p("Automatizar pruebas funcionales y de contrato con Postman, demostrar que detectan un defecto introducido de forma controlada y dejar un procedimiento que pueda repetirse desde una base de datos limpia.")
 heading("3. API implementada")
-p("Se utilizó Node.js 24.18.0, Express 5.3.0 y SQLite 3.53.1. Dos usuarios ficticios obtienen sesiones temporales y administran únicamente sus pedidos. Los importes se calculan en centavos enteros; el propietario se obtiene de la sesión. Los errores tienen código, mensaje, detalles y un identificador de correlación.")
+p("Se utilizó Node.js 24.18.0, Express 5.3.0 y SQLite 3.53.1. Dos usuarios de pruebas obtienen sesiones temporales y administran únicamente sus pedidos. Los importes se calculan en centavos enteros; el propietario se obtiene de la sesión. Los errores tienen código, mensaje, detalles y un identificador de correlación.")
 table(["Operación", "Finalidad"], [
-    ("POST /auth/login", "Autenticar al usuario ficticio."),
+    ("POST /auth/login", "Autenticar al usuario de pruebas."),
     ("POST /orders", "Crear un pedido protegido."),
     ("GET /orders y /orders/{id}", "Listar pedidos propios y consultar uno persistido."),
     ("PUT /orders/{id}/status", "Asignar un estado de forma idempotente."),
     ("DELETE /orders/{id}", "Eliminar un pedido y verificar su ausencia."),
 ])
-p("La API escucha por defecto en http://127.0.0.1:3000. El comando npm run seed genera credenciales ficticias locales y restablece los datos. SQLite y el ambiente con contraseñas quedan excluidos de Git.")
+p("La API escucha por defecto en http://127.0.0.1:3000. El comando npm run seed genera credenciales locales de prueba y restablece los datos. SQLite y el ambiente con contraseñas quedan excluidos de Git.")
 
 page()
 heading("4. Especificación y pruebas realizadas")
@@ -126,8 +131,8 @@ p("El contrato OpenAPI 3.1 documenta siete operaciones, autenticación, parámet
 p("La matriz contiene 18 casos distintos: TC-01 a TC-12 cubren los escenarios obligatorios; TC-13 a TC-18 agregan contraseña incorrecta, paginación inválida, eliminación repetida, JSON malformado, asignación de propietario y aislamiento del listado. Los 46 pasos incluyen preparación y limpieza. Las 234 aserciones no se cuentan como 234 casos.")
 p("El ambiente publicado se importó sin contraseñas ni tokens. Las variables necesarias se distinguen en la siguiente captura de Postman.")
 image("postman-environment-example.png")
-p("Para la ejecución se seleccionó el ambiente local con usuarios ficticios; sus contraseñas se muestran ocultas y no forman parte del repositorio.")
-image("postman-environment-local.png")
+p("Para la ejecución se seleccionó el ambiente local con usuarios de pruebas; sus contraseñas se muestran ocultas y no forman parte del repositorio.")
+image("postman-environment-variables.png")
 p("Los IDs y tokens se capturan durante cada ejecución. La preparación crea los pedidos necesarios para la paginación y la limpieza elimina los recursos generados. La matriz detallada está en docs/test-matrix.md y docs/test-matrix.csv.")
 
 page()
