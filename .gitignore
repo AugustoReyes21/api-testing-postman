@@ -1,0 +1,16 @@
+# Postman: archivos locales y valores sensibles
+*.local.json
+*.secret.json
+.env
+.env.*
+!.env.example
+
+# Newman
+newman/
+reports/
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
