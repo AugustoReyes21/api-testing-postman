@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 const files=execFileSync('git',['ls-files','--cached','-z'],{encoding:'utf8'}).split('\0').filter(Boolean);
 assert(files.length>20,'Prepare el índice de Git antes de la revisión previa.');
-const forbidden=files.filter(f=>/(^|\/)(node_modules|\.runtime|\.env)(\/|$)|\.sqlite(?:-|$)|\.local\.json$/.test(f));
+const forbidden=files.filter(f=>/(^|\/)(node_modules|\.runtime|\.env)(\/|$)|\.sqlite(?:-|$)|\.local\.json$|\.pdf$/i.test(f));
 assert.deepEqual(forbidden,[],'Hay archivos locales o sensibles en el índice.');
 const values=[];
 for(const f of readdirSync('.runtime').filter(n=>n.endsWith('.json'))) {

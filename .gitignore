@@ -20,4 +20,5 @@ node_modules/
 *.sqlite-shm
 *.sqlite-wal
 artifacts/pdf-pages/
+*.pdf
 __pycache__/

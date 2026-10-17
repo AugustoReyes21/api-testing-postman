@@ -35,12 +35,12 @@ Revisión realizada por Codex sobre su implementación aislada. No se atribuye a
 - npm audit --omit=dev no encontró vulnerabilidades de ejecución. Las dependencias antiguas de Newman tienen avisos registrados en evidence/dependency-audit.json. Esto no se presenta como una auditoría de seguridad de producción.
 - No existe video y no se afirma que exista.
 - El estudiante proporcionó su nombre y carné, que se incorporaron al PDF y al DOCX. Se eliminó la línea de curso, docente y sección según su instrucción.
-- El docente necesita acceso de lectura al repositorio privado. La visibilidad no se cambia.
+- El estudiante solicitó hacer público el repositorio para que el docente pueda consultarlo. El PDF se entrega por separado y se excluye del repositorio; se conserva el DOCX editable.
 
 ## Criterios
 
 La matriz, el contrato, la colección, el ambiente de ejemplo, el código y el procedimiento de preparación están incluidos. Los casos de autenticación de dos usuarios, permisos, paginación, validación, persistencia, idempotencia, errores y esquemas se ejecutaron. El defecto activa un fallo real y la corrección lo elimina sin cambiar el contrato.
 
-Los resultados de corrected y clean-repeat, más la persistencia después de reiniciar, son los controles de reproducibilidad. La publicación y el estado final de Git se verifican después de incorporar los entregables. Los permisos de lectura del docente requieren intervención del usuario.
+Los resultados de corrected y clean-repeat, más la persistencia después de reiniciar, son los controles de reproducibilidad. La publicación y el estado final de Git se verifican después de incorporar los entregables. El acceso del docente será público según la instrucción actual del estudiante.
 
 Se creó un segundo worktree limpio desde el commit de la entrega, se instaló con npm ci (214 paquetes) y se ejecutó npm run verify completo. La referencia, la detección del defecto, las dos ejecuciones corregidas y la persistencia al reiniciar volvieron a cumplir lo esperado. evidence/fresh-checkout.json registra 18 casos, 46 solicitudes, 234 aserciones aprobadas y cero fallidas en su última ejecución, además de hashes coincidentes de implementación, contrato, colección y lockfile.

@@ -1,10 +1,10 @@
 # Automatización de pruebas de API con Postman
 
-API académica de pedidos con Express y SQLite, contrato OpenAPI 3.1 y colección de Postman. Repositorio privado: el docente necesita permisos de lectura.
+API académica de pedidos con Express y SQLite, contrato OpenAPI 3.1 y colección de Postman. Repositorio público: el docente puede consultarlo sin solicitar permisos.
 
 ## Entrega y resultados
 
-- [Informe PDF](artifacts/informe-api-postman.pdf) y [DOCX editable](artifacts/informe-api-postman.docx).
+- [DOCX editable](artifacts/informe-api-postman.docx). El PDF se entrega por separado y está excluido del repositorio.
 - [Matriz de pruebas](docs/test-matrix.md) y [CSV](docs/test-matrix.csv).
 - [OpenAPI 3.1](openapi/openapi.json), [colección Postman](collections/pedidos.postman_collection.json) y [ambiente sin secretos](environments/pedidos.example.postman_environment.json).
 - [Resultados finales](evidence/runs/clean-repeat.json), [informe HTML](evidence/execution-report.html) y [capturas auténticas](evidence/screenshots/).
@@ -134,7 +134,7 @@ Lint adicional: npx redocly lint openapi/openapi.json.
 - evidence/screenshots/postman-*.png: ventana real de Postman recortada, sin tokens visibles.
 - evidence/screenshot-manifest.json: procedencia y hashes SHA-256 de imágenes.
 - evidence/execution-report.html: respuestas sanitizadas y resultados consultables en navegador.
-- artifacts/informe-api-postman.docx y .pdf: entrega académica con campos de identificación editables.
+- artifacts/informe-api-postman.docx: entrega académica editable. El PDF generado se conserva solo localmente y no se publica en GitHub.
 
 npm run evidence regenera las capturas complementarias del informe HTML. Requiere Chrome o indicar BROWSER_PATH con un Chromium instalado. No recrea ni simula las capturas de escritorio.
 
@@ -153,7 +153,7 @@ La última orden renderiza todas las páginas en artifacts/pdf-pages/, excluidas
 
 No se publican SQLite, ambientes locales, contraseñas generadas ni tokens. npm audit --omit=dev no encontró vulnerabilidades en dependencias de la API. Las herramientas de desarrollo de Newman contienen avisos heredados, registrados en evidence/dependency-audit.json. Se conserva el ejecutor verificado; no se aplicaron actualizaciones forzadas que cambiaran su comportamiento. Usar solo las colecciones y datos ficticios de esta práctica.
 
-Demostración local académica, sin despliegue público ni video. El PDF y el DOCX incluyen el nombre y carné proporcionados por el estudiante; se omitieron curso, docente y sección según su instrucción. Antes de entregar, conceder al docente lectura en GitHub. Si se edita el DOCX, convertirlo nuevamente a PDF. No cambiar la visibilidad a pública.
+Demostración local académica, sin despliegue público de la API ni video. El PDF y el DOCX incluyen el nombre y carné proporcionados por el estudiante; se omitieron curso, docente y sección según su instrucción. El repositorio es público por solicitud del estudiante. El PDF se entrega por separado; si se edita el DOCX, convertirlo nuevamente a PDF de forma local.
 
 ## Estructura
 
@@ -166,6 +166,6 @@ scripts/       Preparación, pruebas y documentos
 docs/          Matriz, decisiones, revisión y referencias
 defects/       Parche demostrativo inactivo
 evidence/      Ejecuciones sanitizadas y capturas
-artifacts/     PDF y DOCX finales
+artifacts/     DOCX publicado; PDF generado solo localmente
 .runtime/      Bases, ambientes y temporales locales; ignorado
 ```

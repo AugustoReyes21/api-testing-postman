@@ -26,6 +26,7 @@ Durante la preparación aparecieron archivos .js y una configuración de package
 - La exportación JSON del Runner de Postman requiere un plan adicional en esta instalación. Se conservaron capturas y reportes sanitizados de Newman.
 - Word 16.0 estaba disponible y abrió el DOCX. La exportación COM no finalizó; se utilizó una conversión del DOCX a PDF con ReportLab. Se renderizaron y revisaron visualmente las siete páginas finales.
 - En la actualización solicitada por el estudiante se incorporaron su nombre y carné al PDF y al DOCX y se eliminó la línea de curso, docente y sección.
+- Posteriormente se solicitó quitar la sección final sobre apoyo de IA del informe, entregar el PDF por separado y hacer público GitHub. El PDF queda excluido de Git; se conserva localmente y se retira del historial de main antes del cambio de visibilidad, con un respaldo privado local previo.
 
 ## Decisiones
 

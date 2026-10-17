@@ -177,11 +177,7 @@ p("Las pruebas detectaron tanto incumplimientos funcionales como una respuesta c
 p("Las dos ejecuciones finales desde datos restablecidos terminaron sin fallos. La API también conservó un pedido después de reiniciar el proceso. Estos resultados respaldan la reproducibilidad de la práctica dentro del alcance de los escenarios automatizados.")
 heading("11. Repositorio y reproducción")
 p("https://github.com/AugustoReyes21/api-testing-postman")
-p("El repositorio sigue siendo privado; el docente necesita permisos de lectura. Incluye código, contrato, matriz, colección, ambiente sin secretos, scripts, resultados, capturas, DOCX y PDF. Para verificar todo: npm ci y npm run verify. Para la aplicación gráfica: npm run seed, npm start e importar los archivos indicados en el README.")
-heading("12. Apoyo de IA y verificación")
-p("Codex apoyó la implementación, integración, pruebas, documentación y generación de evidencias. Se ejecutaron solicitudes reales, se revisaron resultados y se renderizaron las páginas del PDF. Las capturas corresponden a Postman y al informe de Newman; no se generaron imágenes artificiales para representar pruebas.")
-p("Claude Code no estaba instalado ni disponible en las rutas comprobadas. Por ello no participó ni realizó una revisión independiente. No se atribuyen conversaciones o resultados a esa herramienta. Tampoco se grabó un video.")
-p("La API no tiene vulnerabilidades reportadas en sus dependencias de ejecución; Newman conserva avisos de dependencias de desarrollo documentados en el repositorio. Esta entrega corresponde a una práctica local con datos ficticios.")
+p("El repositorio es público y el docente puede consultarlo sin solicitar permisos. Incluye código, contrato, matriz, colección, ambiente sin secretos, scripts, resultados, capturas y el DOCX editable. El PDF se entrega por separado y no se incluye en GitHub. Para verificar todo: npm ci y npm run verify. Para la aplicación gráfica: npm run seed, npm start e importar los archivos indicados en el README.")
 
 # Sin secciones de encabezado/pie ni leyendas bajo imágenes.
 output = ART / "informe-api-postman.docx"
