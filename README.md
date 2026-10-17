@@ -153,7 +153,7 @@ La última orden renderiza todas las páginas en artifacts/pdf-pages/, excluidas
 
 No se publican SQLite, ambientes locales, contraseñas generadas ni tokens. npm audit --omit=dev no encontró vulnerabilidades en dependencias de la API. Las herramientas de desarrollo de Newman contienen avisos heredados, registrados en evidence/dependency-audit.json. Se conserva el ejecutor verificado; no se aplicaron actualizaciones forzadas que cambiaran su comportamiento. Usar solo las colecciones y datos ficticios de esta práctica.
 
-Demostración local académica, sin despliegue público ni video. Antes de entregar: completar datos del estudiante en el DOCX, convertir de nuevo si se edita y conceder al docente lectura en GitHub. No cambiar la visibilidad a pública.
+Demostración local académica, sin despliegue público ni video. El PDF y el DOCX incluyen el nombre y carné proporcionados por el estudiante; se omitieron curso, docente y sección según su instrucción. Antes de entregar, conceder al docente lectura en GitHub. Si se edita el DOCX, convertirlo nuevamente a PDF. No cambiar la visibilidad a pública.
 
 ## Estructura
 

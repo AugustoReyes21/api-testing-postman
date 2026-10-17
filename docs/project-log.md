@@ -25,7 +25,7 @@ Durante la preparación aparecieron archivos .js y una configuración de package
 - Newman 6.2.3: 18 casos, 46 solicitudes y 234 aserciones; corrección y repetición desde bases limpias aprobadas; persistencia a través de reinicio comprobada.
 - La exportación JSON del Runner de Postman requiere un plan adicional en esta instalación. Se conservaron capturas y reportes sanitizados de Newman.
 - Word 16.0 estaba disponible y abrió el DOCX. La exportación COM no finalizó; se utilizó una conversión del DOCX a PDF con ReportLab. Se renderizaron y revisaron visualmente las siete páginas finales.
-- Los datos de identificación académica que no fueron proporcionados permanecen editables.
+- En la actualización solicitada por el estudiante se incorporaron su nombre y carné al PDF y al DOCX y se eliminó la línea de curso, docente y sección.
 
 ## Decisiones
 

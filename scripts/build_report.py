@@ -100,8 +100,8 @@ def table(headers, rows):
     return t
 
 doc.add_paragraph("Automatización de pruebas de API con Postman", "Title")
-p("Estudiante: [Nombre del estudiante]    Carné: [Carné]")
-p("Curso: [Curso]    Docente: [Docente]    Sección: [Sección]")
+p("Estudiante: José Augusto Reyes Samayoa")
+p("Carné: 2790-22-14075")
 date = datetime.now(timezone(timedelta(hours=-6), name="America/Guatemala"))
 months = "enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre".split()
 p(f"Fecha de verificación: {date.day} de {months[date.month-1]} de {date.year}.")
@@ -181,7 +181,7 @@ p("El repositorio sigue siendo privado; el docente necesita permisos de lectura.
 heading("12. Apoyo de IA y verificación")
 p("Codex apoyó la implementación, integración, pruebas, documentación y generación de evidencias. Se ejecutaron solicitudes reales, se revisaron resultados y se renderizaron las páginas del PDF. Las capturas corresponden a Postman y al informe de Newman; no se generaron imágenes artificiales para representar pruebas.")
 p("Claude Code no estaba instalado ni disponible en las rutas comprobadas. Por ello no participó ni realizó una revisión independiente. No se atribuyen conversaciones o resultados a esa herramienta. Tampoco se grabó un video.")
-p("Los campos personales permanecen editables porque no fueron proporcionados. La API no tiene vulnerabilidades reportadas en sus dependencias de ejecución; Newman conserva avisos de dependencias de desarrollo documentados en el repositorio. Esta entrega corresponde a una práctica local con datos ficticios.")
+p("La API no tiene vulnerabilidades reportadas en sus dependencias de ejecución; Newman conserva avisos de dependencias de desarrollo documentados en el repositorio. Esta entrega corresponde a una práctica local con datos ficticios.")
 
 # Sin secciones de encabezado/pie ni leyendas bajo imágenes.
 output = ART / "informe-api-postman.docx"

@@ -7,7 +7,7 @@
       "page": 1,
       "widthPt": 612.0,
       "heightPt": 792.0,
-      "textLength": 1596,
+      "textLength": 1552,
       "imageCount": 0,
       "render": "artifacts/pdf-pages/page-01.png"
     },
@@ -55,7 +55,7 @@
       "page": 7,
       "widthPt": 612.0,
       "heightPt": 792.0,
-      "textLength": 2461,
+      "textLength": 2385,
       "imageCount": 0,
       "render": "artifacts/pdf-pages/page-07.png"
     }

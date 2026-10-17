@@ -34,13 +34,13 @@ Revisión realizada por Codex sobre su implementación aislada. No se atribuye a
 - Microsoft Word 16.0 abrió el DOCX, pero la exportación COM no finalizó. Se cerró exclusivamente la sesión de esta tarea sin guardar cambios. El PDF final se convirtió desde el DOCX con ReportLab 5.0.0 y se comprobó con PyMuPDF; no se atribuye esa conversión a Word.
 - npm audit --omit=dev no encontró vulnerabilidades de ejecución. Las dependencias antiguas de Newman tienen avisos registrados en evidence/dependency-audit.json. Esto no se presenta como una auditoría de seguridad de producción.
 - No existe video y no se afirma que exista.
-- Los datos personales del estudiante, carné, curso, docente y sección faltan: se dejaron campos editables.
+- El estudiante proporcionó su nombre y carné, que se incorporaron al PDF y al DOCX. Se eliminó la línea de curso, docente y sección según su instrucción.
 - El docente necesita acceso de lectura al repositorio privado. La visibilidad no se cambia.
 
 ## Criterios
 
 La matriz, el contrato, la colección, el ambiente de ejemplo, el código y el procedimiento de preparación están incluidos. Los casos de autenticación de dos usuarios, permisos, paginación, validación, persistencia, idempotencia, errores y esquemas se ejecutaron. El defecto activa un fallo real y la corrección lo elimina sin cambiar el contrato.
 
-Los resultados de corrected y clean-repeat, más la persistencia después de reiniciar, son los controles de reproducibilidad. La publicación y el estado final de Git se verifican después de incorporar los entregables. Los permisos del docente y los campos personales requieren intervención del usuario.
+Los resultados de corrected y clean-repeat, más la persistencia después de reiniciar, son los controles de reproducibilidad. La publicación y el estado final de Git se verifican después de incorporar los entregables. Los permisos de lectura del docente requieren intervención del usuario.
 
 Se creó un segundo worktree limpio desde el commit de la entrega, se instaló con npm ci (214 paquetes) y se ejecutó npm run verify completo. La referencia, la detección del defecto, las dos ejecuciones corregidas y la persistencia al reiniciar volvieron a cumplir lo esperado. evidence/fresh-checkout.json registra 18 casos, 46 solicitudes, 234 aserciones aprobadas y cero fallidas en su última ejecución, además de hashes coincidentes de implementación, contrato, colección y lockfile.
