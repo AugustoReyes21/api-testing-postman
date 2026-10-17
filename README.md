@@ -90,6 +90,8 @@ El script detiene y reinicia su API, restaura la implementación en finally y co
 
 Los informes conservan fechas UTC; el PDF utiliza America/Guatemala. No se suman aserciones de distintas ejecuciones para inflar el resultado.
 
+Se comprobó además una copia limpia del commit con npm ci y npm run verify, sin ambientes ni bases privados preexistentes. Resultado: 18 casos, 46 solicitudes, 234 aprobadas y cero fallidas. Los hashes del código, contrato, colección y lockfile coinciden con la entrega: [verificación de copia limpia](evidence/fresh-checkout.json).
+
 ## API y reglas funcionales
 
 | Operación | Comportamiento |

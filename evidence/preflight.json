@@ -1,8 +1,8 @@
 {
-  "checkedAt": "2026-10-17T01:56:57.535Z",
-  "stagedFiles": 72,
-  "textFilesScanned": 49,
-  "relativeLinksChecked": 16,
+  "checkedAt": "2026-10-17T01:58:14.829Z",
+  "stagedFiles": 74,
+  "textFilesScanned": 51,
+  "relativeLinksChecked": 17,
   "forbiddenFiles": [],
   "localCredentialsFound": false,
   "knownSecretPatternsFound": false,

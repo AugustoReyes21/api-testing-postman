@@ -1,0 +1,14 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import assert from 'node:assert/strict';
+const prefix=(process.argv[2] || '.runtime/clean-checkout').replaceAll('\\','/').replace(/\/$/,'')+'/';
+const verification=JSON.parse(readFileSync(prefix+'evidence/verification.json'));
+const final=JSON.parse(readFileSync(prefix+'evidence/runs/clean-repeat.json'));
+assert(verification.success && final.success);
+const hash=file=>createHash('sha256').update(readFileSync(file)).digest('hex');
+const files=['src/app.mjs','src/database.mjs','src/security.mjs','src/server.mjs','openapi/openapi.json','collections/pedidos.postman_collection.json','package-lock.json'];
+const result={checkedAt:new Date().toISOString(),sourceCommit:execFileSync('git',['-C',prefix,'rev-parse','HEAD'],{encoding:'utf8'}).trim(),method:'Worktree limpio del commit validado; npm ci instaló 214 paquetes; npm run verify se ejecutó sin archivos privados preexistentes.',success:verification.success,cases:final.caseCount,requests:final.requestCount,assertionsPassed:final.assertionsPassed,assertionsFailed:final.assertionsFailed,contractFailures:final.contractFailures.length,implementationRestored:verification.implementationRestored,contractUnchanged:verification.contractUnchanged,verifiedFiles:files.map(file=>({path:file,sha256:hash(file),matchesFreshCheckout:hash(file)===hash(prefix+file)}))};
+assert(result.verifiedFiles.every(f=>f.matchesFreshCheckout));
+writeFileSync('evidence/fresh-checkout.json',JSON.stringify(result,null,2)+'\n');
+console.log(JSON.stringify(result,null,2));

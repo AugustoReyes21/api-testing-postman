@@ -1,0 +1,50 @@
+{
+  "checkedAt": "2026-10-17T01:58:14.672Z",
+  "sourceCommit": "a9a6e65142b5814f37f7a86638541084282c6a8d",
+  "method": "Worktree limpio del commit validado; npm ci instaló 214 paquetes; npm run verify se ejecutó sin archivos privados preexistentes.",
+  "success": true,
+  "cases": 18,
+  "requests": 46,
+  "assertionsPassed": 234,
+  "assertionsFailed": 0,
+  "contractFailures": 0,
+  "implementationRestored": true,
+  "contractUnchanged": true,
+  "verifiedFiles": [
+    {
+      "path": "src/app.mjs",
+      "sha256": "d3a46f7b81097ebcd1f3c95c95967d53c7eeb01390d14eb4ad206f404ee99c73",
+      "matchesFreshCheckout": true
+    },
+    {
+      "path": "src/database.mjs",
+      "sha256": "b0719bb4a58199305c1ac07bd50592bc4673ceaf7fe952760f7b175f29a1e419",
+      "matchesFreshCheckout": true
+    },
+    {
+      "path": "src/security.mjs",
+      "sha256": "44c1a0f2dee70c540d20d5a6ca3ff7fc8ba7397d81765d3981c681075fa70108",
+      "matchesFreshCheckout": true
+    },
+    {
+      "path": "src/server.mjs",
+      "sha256": "284940c41c24e89c577335682919f6aaf961ede75844c7f7fb2f4b5213ef430b",
+      "matchesFreshCheckout": true
+    },
+    {
+      "path": "openapi/openapi.json",
+      "sha256": "faf8e8f47ec28fa1d89c555fe6cbe3b3ce19b6b6f5a1347cf3cf71ae77afcfa9",
+      "matchesFreshCheckout": true
+    },
+    {
+      "path": "collections/pedidos.postman_collection.json",
+      "sha256": "ab96e7791e39572b05caac61e2ab451ee391be5628982d73d57a0f99c1dda58f",
+      "matchesFreshCheckout": true
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "69d36f8b9080ac1ec19f45963728dbd5c0e4200ca50ef84a9182ca8bb55dcc91",
+      "matchesFreshCheckout": true
+    }
+  ]
+}
